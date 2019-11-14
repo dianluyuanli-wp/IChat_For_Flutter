@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../model/User.dart';
-import 'package:dio/dio.dart';
 import 'package:toast/toast.dart';
-
-Dio dio = Dio();
+import '../global.dart';
+import '../tools/network.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -20,7 +18,7 @@ class _LogInState extends State<LogIn> {
 
   @override
   void initState() {
-    _unameController.text = 'last Login';//Global.profile.lastLogin;
+    _unameController.text = Global.profile.user;
     if (_unameController.text != null) {
       _nameAutoFocus = false;
     }
@@ -82,7 +80,6 @@ class _LogInState extends State<LogIn> {
                     return v.trim().isNotEmpty ? null : 'required passWord';
                   },
                 ),
-                Text(Provider.of<UserModle>(context).user),
                 Padding(
                   padding: const EdgeInsets.only(top: 25),
                   child: ConstrainedBox(
@@ -104,11 +101,16 @@ class _LogInState extends State<LogIn> {
   }
 
   void _onLogin () async {
-    Response res;
-    res = await dio.post('http://tangshisanbaishou.xyz/api/chatVerify', data: {
+    var res;
+    // res = await dio.post('http://tangshisanbaishou.xyz/api/chatVerify', data: {
+    //   'userName': _unameController.text,
+    //   'passWord': _pwdController.text
+    // });
+    res = await Network.post('chatVerify', {
       'userName': _unameController.text,
       'passWord': _pwdController.text
     });
+    Provider.of<UserModle>(context).user = _unameController.text;
     if (res.toString() == 'verified') {
       Provider.of<UserModle>(context).isLogin = true;
     } else {

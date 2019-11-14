@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:i_chat/page/myAccount.dart';
 import 'page/logIn.dart';
 import 'package:provider/provider.dart';
-import 'model/User.dart';
+//import 'model/User.dart';
+import 'global.dart';
 
-void main() => runApp(MyApp());
+void main() => Global.init().then((e) => runApp(MyApp()));
 
 class MyApp extends StatelessWidget {
   // This widget is the root of your application.
@@ -93,7 +95,7 @@ class MiddleContent extends StatelessWidget {
         )
       ),
       1: Text('找朋友'),
-      2: Text('我自己')
+      2: MyAccount()
     };
     return contentMap[index];
   }
