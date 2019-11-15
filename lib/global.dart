@@ -6,15 +6,21 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Profile {
   String user = '';
   bool isLogin = false;
+  List friendRequest = [];
+  String avatar = '';
+  String nickName = '';
+  List friendsList = [];
 
   Profile();
 
   Profile.fromJson(Map json) {
     user = json['user'];
+    isLogin = json['isLogin'];
   }
 
   Map<String, dynamic> toJson() => {
-    'user': user
+    'user': user,
+    'isLogin': isLogin
   };
 }
 
@@ -34,9 +40,7 @@ class Global {
     }
   }
 
-  static saveProfile() => {
-    _prefs.setString('profile', jsonEncode(profile.toJson()))
-  };
+  static saveProfile() => _prefs.setString('profile', jsonEncode(profile.toJson()));
 }
 
 class ProfileChangeNotifier extends ChangeNotifier {

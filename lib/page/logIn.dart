@@ -102,6 +102,7 @@ class _LogInState extends State<LogIn> {
 
   void _onLogin () async {
     var res;
+    String userName = _unameController.text;
     // res = await dio.post('http://tangshisanbaishou.xyz/api/chatVerify', data: {
     //   'userName': _unameController.text,
     //   'passWord': _pwdController.text
@@ -110,8 +111,10 @@ class _LogInState extends State<LogIn> {
       'userName': _unameController.text,
       'passWord': _pwdController.text
     });
-    Provider.of<UserModle>(context).user = _unameController.text;
+    Provider.of<UserModle>(context).user = userName;
     if (res.toString() == 'verified') {
+      var info = await Network.get('userInfo', {'userName' : userName});
+      print(info);
       Provider.of<UserModle>(context).isLogin = true;
     } else {
       Toast.show('账号密码错误', context, duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
