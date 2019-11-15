@@ -9,6 +9,7 @@ class Profile {
   List friendRequest = [];
   String avatar = '';
   String nickName = '';
+  //  填充内容
   List friendsList = [];
 
   Profile();
