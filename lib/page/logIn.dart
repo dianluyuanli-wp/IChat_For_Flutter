@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:toast/toast.dart';
 import '../global.dart';
 import '../tools/network.dart';
+import 'dart:convert';
+import 'package:dio/dio.dart';
 
 class LogIn extends StatefulWidget {
   @override
@@ -113,8 +115,10 @@ class _LogInState extends State<LogIn> {
     });
     Provider.of<UserModle>(context).user = userName;
     if (res.toString() == 'verified') {
-      var info = await Network.get('userInfo', {'userName' : userName});
-      print(info);
+      Response info = await Network.get('userInfo', {'userName' : userName});
+      //String aa = info.data['nickName'];
+      Provider.of<UserModle>(context).apiUpdate(info.data);
+      print(Provider.of<UserModle>(context).nickName);
       Provider.of<UserModle>(context).isLogin = true;
     } else {
       Toast.show('账号密码错误', context, duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);

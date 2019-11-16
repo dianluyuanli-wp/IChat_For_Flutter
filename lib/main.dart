@@ -13,7 +13,6 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        Provider<String>.value(value: '王小明'),
         ListenableProvider<UserModle>.value(value: new UserModle())
       ],
       child: MaterialApp(
@@ -85,9 +84,40 @@ class MiddleContent extends StatelessWidget {
     final contentMap = {
       0: Scrollbar(
         child: ListView.separated(
-          itemCount: 100,
+          itemCount: Provider.of<UserModle>(context).friendsList.length,
           itemBuilder: (BuildContext context, int index) {
-            return ListTile(title: Text('$index'), onTap: () => {enterTalk(context)});
+            //return ListTile(title: Text('$index'), onTap: () => {enterTalk(context)});
+            Map friendInfo = Provider.of<UserModle>(context).friendsList[index];
+            return GestureDetector(
+              child: Container(
+                constraints: BoxConstraints(
+                  minWidth: 360,
+                  maxHeight: 55
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black12
+                ),
+                child: Row(
+                  children: <Widget>[
+                    Image(
+                      image: NetworkImage(friendInfo['avatar']),
+                      width: 50,
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Container(
+                          margin: EdgeInsets.fromLTRB(0, 7, 0, 7),
+                          child: Text(friendInfo['nickName']),
+                        ),
+                        Text('大家好1111111111111')
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              onTap: () => {enterTalk(context)}
+            );
           },
           separatorBuilder: (BuildContext contet, int index) {
             return index % 2 == 0 ? Divider(color: Colors.blue) : Divider(color: Colors.green,);

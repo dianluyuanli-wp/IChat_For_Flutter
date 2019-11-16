@@ -6,10 +6,13 @@ import 'package:shared_preferences/shared_preferences.dart';
 class Profile {
   String user = '';
   bool isLogin = false;
+  //  好友申请列表
   List friendRequest = [];
+  //  头像
   String avatar = '';
+  //  昵称
   String nickName = '';
-  //  填充内容
+  //  好友列表
   List friendsList = [];
 
   Profile();
@@ -17,11 +20,19 @@ class Profile {
   Profile.fromJson(Map json) {
     user = json['user'];
     isLogin = json['isLogin'];
+    friendRequest = json['friendRequest'];
+    avatar = json['avatar'];
+    friendsList = json['friendsList'];
+    nickName = json['nickName'];
   }
 
   Map<String, dynamic> toJson() => {
     'user': user,
-    'isLogin': isLogin
+    'isLogin': isLogin,
+    'friendRequest': friendRequest,
+    'avatar': avatar,
+    'friendsList': friendsList,
+    'nickName': nickName
   };
 }
 
@@ -66,4 +77,37 @@ class UserModle extends ProfileChangeNotifier {
     _profile.isLogin = value;
     notifyListeners();
   }
+
+  List get friendRequest => _profile.friendRequest;
+  set friendRequest(List value) {
+    _profile.friendRequest = value;
+    notifyListeners();
+  }
+
+  String get avatar => _profile.avatar;
+  set avatar(String value) {
+    _profile.avatar = value;
+    notifyListeners();
+  }
+
+  List get friendsList => _profile.friendsList;
+  set friendsList(List value) {
+    _profile.friendsList = value;
+    notifyListeners();
+  }
+
+  String get nickName => _profile.nickName;
+  set nickName(String value) {
+    _profile.nickName = value;
+    notifyListeners();
+  }
+
+  void apiUpdate(Map data) {
+    _profile.friendRequest = data['friendRequest'];
+    _profile.friendsList = data['friendsList'];
+    _profile.nickName = data['nickName'];
+    _profile.avatar = data['avatar'];
+  }
+
+  Map get modelJson => _profile.toJson();
 } 
