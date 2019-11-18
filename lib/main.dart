@@ -143,9 +143,9 @@ class TitleContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const contentMap = {
-      0: '好基友',
-      1: '找朋友',
-      2: '我自己'
+      0: 'IChat',
+      1: 'Concats',
+      2: 'Me'
     };
     return Row(
       mainAxisAlignment: MainAxisAlignment.center, 
