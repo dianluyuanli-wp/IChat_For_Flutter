@@ -88,11 +88,11 @@ class ModifyItem extends StatelessWidget {
         padding: EdgeInsets.only(left: 10),
         child: Text(text),
       ),
-      onTap: modify,
+      onTap: () => modify(context, text, keyName),
     );
   }
 }
 
-void modify() {
-  
+void modify(BuildContext context, String text, String keyName) {
+  Navigator.pushNamed(context, 'modify', arguments: {'text': text, 'keyName': keyName});
 }

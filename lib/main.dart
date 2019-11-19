@@ -4,6 +4,7 @@ import 'page/logIn.dart';
 import 'package:provider/provider.dart';
 //import 'model/User.dart';
 import 'global.dart';
+import 'page/modify.dart';
 
 void main() => Global.init().then((e) => runApp(MyApp()));
 
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => Provider.of<UserModle>(context).isLogin ? MyHomePage() : LogIn(),
           //MyHomePage(),
           'chat': (context) => Chat(),
+          'modify': (context) => Modify(),
         }
       )
     );
@@ -132,7 +134,6 @@ class MiddleContent extends StatelessWidget {
 
   void enterTalk(context) {
     Navigator.pushNamed(context, 'chat');
-    print('enter Talk !!!!');
   }
 }
 
