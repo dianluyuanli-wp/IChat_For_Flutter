@@ -6,7 +6,9 @@ Map apiMap = {
   //  用户登录验证
   'chatVerify': 'chatVerify',
   //  获取用户信息
-  'userInfo': 'userInfo'
+  'userInfo': 'userInfo',
+  //  更新用户信息
+  'updateUserInfo': 'updateUserInfo'
 };
 
 String domain = 'http://tangshisanbaishou.xyz/api/';

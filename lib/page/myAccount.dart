@@ -11,48 +11,50 @@ class MyAccount extends StatefulWidget {
 class _MyAccountState extends State<MyAccount> {
   @override
   Widget build(BuildContext context) {
-    return Container(
-      constraints: BoxConstraints(minWidth: double.infinity),
-      decoration: BoxDecoration(
-        color: Color(0xf0eff5ff),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          Container(
-            child: PersonInfoBar(infoMap: Provider.of<UserModle>(context).modelJson),
-            margin: EdgeInsets.only(top: 15),
-          ),
-          Container(
-            margin: EdgeInsets.only(top: 15),
-            child: Column(
-              children: <Widget>[
-                ModifyItem(text: 'Nickname', keyName: 'nickName'),
-                ModifyItem(text: 'Avatar', keyName: 'nickName'),
-                ModifyItem(text: 'Password', keyName: 'nickName', useBottomBorder: true)
-              ],
+    return SingleChildScrollView(
+      child: Container(
+        constraints: BoxConstraints(minWidth: double.infinity),
+        decoration: BoxDecoration(
+          color: Color(0xf0eff5ff),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          mainAxisSize: MainAxisSize.max,
+          children: <Widget>[
+            Container(
+              child: PersonInfoBar(infoMap: Provider.of<UserModle>(context).modelJson),
+              margin: EdgeInsets.only(top: 15),
             ),
-          ),
-          Container(
-            child: GestureDetector(
-              child: Container(
-                alignment: Alignment.center,
-                margin: EdgeInsets.only(top: 45),
-                constraints: BoxConstraints(
-                  minWidth: double.infinity,
-                  minHeight: 45
-                ),
-                decoration: BoxDecoration(
-                  color: Color(0xffffffff),
-                  border: Border(top: borderStyle, bottom: borderStyle)
-                ),
-                child: Text('Log Out', style: TextStyle(color: Colors.red)),
+            Container(
+              margin: EdgeInsets.only(top: 15),
+              child: Column(
+                children: <Widget>[
+                  ModifyItem(text: 'Nickname', keyName: 'nickName'),
+                  ModifyItem(text: 'Avatar', keyName: 'nickName'),
+                  ModifyItem(text: 'Password', keyName: 'nickName', useBottomBorder: true)
+                ],
               ),
-              onTap: quit,
-            ) 
-          )
-        ],
+            ),
+            Container(
+              child: GestureDetector(
+                child: Container(
+                  alignment: Alignment.center,
+                  margin: EdgeInsets.only(top: 45),
+                  constraints: BoxConstraints(
+                    minWidth: double.infinity,
+                    minHeight: 45
+                  ),
+                  decoration: BoxDecoration(
+                    color: Color(0xffffffff),
+                    border: Border(top: borderStyle, bottom: borderStyle)
+                  ),
+                  child: Text('Log Out', style: TextStyle(color: Colors.red)),
+                ),
+                onTap: quit,
+              ) 
+            )
+          ],
+        )
       )
     );
   }

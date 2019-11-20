@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class PersonInfoBar extends StatelessWidget {
   PersonInfoBar({
@@ -15,7 +16,7 @@ class PersonInfoBar extends StatelessWidget {
       child: Row(
         children: <Widget>[
           Image(
-            image: NetworkImage(infoMap['avatar']),
+            image: CachedNetworkImageProvider(infoMap['avatar']),
             height: 70,
           ),
           Column(

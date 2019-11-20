@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:i_chat/page/myAccount.dart';
 import 'page/logIn.dart';
 import 'package:provider/provider.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 //import 'model/User.dart';
 import 'global.dart';
-import 'page/modify.dart';
+import 'page/modify/modify.dart';
 
 void main() => Global.init().then((e) => runApp(MyApp()));
 
@@ -102,7 +103,7 @@ class MiddleContent extends StatelessWidget {
                 child: Row(
                   children: <Widget>[
                     Image(
-                      image: NetworkImage(friendInfo['avatar']),
+                      image: CachedNetworkImageProvider(friendInfo['avatar']),
                       width: 50,
                     ),
                     Column(
