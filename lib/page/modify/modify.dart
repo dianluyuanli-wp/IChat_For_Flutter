@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../global.dart';
 import 'nickname.dart';
+import 'password.dart';
+import 'package:toast/toast.dart';
 import '../../tools/network.dart';
 
 class Modify extends StatefulWidget {
@@ -12,25 +14,42 @@ class Modify extends StatefulWidget {
 class _ModifyState extends State<Modify> {
   bool canSave = false;
   Map newContent = {
-    'newNickname': ''
+    'nickName': ''
   };
 
   void _changeSaveStatus(bool value) {
     //  不延迟的话会报渲染过程中重复setState的错
     Future.delayed(Duration(milliseconds: 200)).then((e) {
-      setState(() {
-      canSave = value; 
-      });
+      if(mounted) {
+        setState(() {
+          canSave = value; 
+        });
+      }
     });
   }
 
-  void modifyContent(String key, String value) {
-    // var res;
-    // res = await Network.post('updateUserInfo', {
-    //   'changeObj': obj,
-    // });
+  void modifyContent(String key, String value) async{
     newContent[key] = value;
-    print(newContent);
+  }
+
+  void updateInfo(String key ) async {
+    if (!canSave) {
+      return ;
+    }
+    var res;
+    Map reqObj = {
+      'userName': Provider.of<UserModle>(context).user,
+      'changeObj': { key: newContent[key]}
+    };
+    print(reqObj);
+    res = await Network.post('updateUserInfo', reqObj);
+    print(newContent[key]);
+    if (key == 'nickName') {
+      Provider.of<UserModle>(context).nickName = newContent[key];
+    }
+    if (res.toString() == 'success') {
+      Toast.show('修改成功', context, duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
+    }
   }
 
   @override
@@ -38,6 +57,7 @@ class _ModifyState extends State<Modify> {
     final Map arg = ModalRoute.of(context).settings.arguments;
     final Map modifyWidgtMap = {
       'nickName': NickName(handler: _changeSaveStatus, modifyFunc: modifyContent),
+      'passWord': Password(handler: _changeSaveStatus, modifyFunc: modifyContent)
     };
     Color saveColor = Colors.white;
     Color canNotSaveColor = Color.fromRGBO(255, 255, 255, 0.5);
@@ -47,7 +67,7 @@ class _ModifyState extends State<Modify> {
         centerTitle: true,
         actions: <Widget>[IconButton(
           icon: Icon(Icons.save_alt, color: canSave ? saveColor : canNotSaveColor),
-          onPressed: () => {},
+          onPressed: () => updateInfo(arg['keyName']),
         )],
         title: Container(
           alignment: Alignment.center,

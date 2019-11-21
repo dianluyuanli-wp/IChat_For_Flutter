@@ -24,7 +24,7 @@ class PersonInfoBar extends StatelessWidget {
             children: <Widget>[
               Container(
                 margin: EdgeInsetsDirectional.only(bottom: 8),
-                child: Text(infoMap['nickName']),
+                child: Text(infoMap['nickName'] ?? 'dddd'),
               ),
               Text('chatId: ' + infoMap['user'])
             ],

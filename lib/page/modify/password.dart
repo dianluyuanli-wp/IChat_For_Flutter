@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../global.dart';
 
-class NickName extends StatefulWidget {
-  NickName({Key key, @required this.handler, @required this.modifyFunc}) 
+class Password extends StatefulWidget {
+  Password({Key key, @required this.handler, @required this.modifyFunc}) 
     : super(key: key);
   final ValueChanged<bool> handler;
   final modifyFunc;
@@ -11,10 +11,10 @@ class NickName extends StatefulWidget {
   //var modifyFunc;
 
   @override
-  _NickNameState createState() => _NickNameState();
+  _PasswordState createState() => _PasswordState();
 }
 
-class _NickNameState extends State<NickName> {
+class _PasswordState extends State<Password> {
   TextEditingController _nickNameController = new TextEditingController();
   GlobalKey _formKey = new GlobalKey<FormState>();
   bool _nameAutoFocus = true;

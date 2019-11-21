@@ -31,7 +31,7 @@ class _MyAccountState extends State<MyAccount> {
                 children: <Widget>[
                   ModifyItem(text: 'Nickname', keyName: 'nickName'),
                   ModifyItem(text: 'Avatar', keyName: 'nickName'),
-                  ModifyItem(text: 'Password', keyName: 'nickName', useBottomBorder: true)
+                  ModifyItem(text: 'Password', keyName: 'passWord', useBottomBorder: true)
                 ],
               ),
             ),
