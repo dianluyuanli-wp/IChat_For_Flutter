@@ -102,20 +102,10 @@ class _LogInState extends State<LogIn> {
   }
 
   void _onLogin () async {
-    var res;
     String userName = _unameController.text;
-    // res = await dio.post('http://tangshisanbaishou.xyz/api/chatVerify', data: {
-    //   'userName': _unameController.text,
-    //   'passWord': _pwdController.text
-    // });
-    res = await Network.post('chatVerify', {
-      'userName': _unameController.text,
-      'passWord': _pwdController.text
-    });
     Provider.of<UserModle>(context).user = userName;
-    if (res.toString() == 'verified') {
+    if (await userVerify(_unameController.text, _pwdController.text)) {
       Response info = await Network.get('userInfo', {'userName' : userName});
-      //String aa = info.data['nickName'];
       Provider.of<UserModle>(context).apiUpdate(info.data);
       print(Provider.of<UserModle>(context).nickName);
       Provider.of<UserModle>(context).isLogin = true;

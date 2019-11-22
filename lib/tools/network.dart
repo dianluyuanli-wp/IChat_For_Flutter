@@ -26,3 +26,9 @@ class Network {
     return res;
   }
 }
+
+Future userVerify(String user, String pwd) async{
+  Response res;
+  res = await Network.post('chatVerify', {'userName': user, 'passWord': pwd});
+  return res.toString() == 'verified';
+}

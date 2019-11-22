@@ -33,10 +33,8 @@ class _NickNameState extends State<NickName> {
               autofocus: _nameAutoFocus,
               controller: _nickNameController,
               decoration: InputDecoration(
-                //labelStyle: TextStyle(color: Colors.greenAccent),
                 labelText: 'NickName',
                 hintText: 'Enter your new nickname',
-                //hintStyle: TextStyle(color: Colors.red),
                 prefixIcon: Icon(Icons.notification_important)
               ),
               validator: (v) {
