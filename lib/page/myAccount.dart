@@ -30,7 +30,7 @@ class _MyAccountState extends State<MyAccount> {
               child: Column(
                 children: <Widget>[
                   ModifyItem(text: 'Nickname', keyName: 'nickName'),
-                  ModifyItem(text: 'Avatar', keyName: 'nickName'),
+                  ModifyItem(text: 'Avatar', keyName: 'avatar'),
                   ModifyItem(text: 'Password', keyName: 'passWord', useBottomBorder: true)
                 ],
               ),

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../../global.dart';
 import 'nickname.dart';
 import 'password.dart';
+import 'avatar.dart';
 import 'package:toast/toast.dart';
 import '../../tools/network.dart';
 
@@ -70,7 +71,8 @@ class _ModifyState extends State<Modify> {
     final Map arg = ModalRoute.of(context).settings.arguments;
     final Map modifyWidgtMap = {
       'nickName': NickName(handler: _changeSaveStatus, modifyFunc: modifyContent),
-      'passWord': Password(handler: _changeSaveStatus, modifyFunc: modifyContent)
+      'passWord': Password(handler: _changeSaveStatus, modifyFunc: modifyContent),
+      'avatar': Avatar(handler: _changeSaveStatus, modifyFunc: modifyContent)
     };
     Color saveColor = Colors.white;
     Color canNotSaveColor = Color.fromRGBO(255, 255, 255, 0.5);
