@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../global.dart';
+import 'package:image_crop/image_crop.dart';
 import 'package:image_picker/image_picker.dart';
 
 class Avatar extends StatefulWidget {
@@ -15,8 +16,8 @@ class Avatar extends StatefulWidget {
 
 class _AvatarState extends State<Avatar> {
   var _imgPath;
-  bool showImg = false;
-  num showCircle = 0;
+  bool showCircle = false;
+  final cropKey = GlobalKey<CropState>();
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +25,11 @@ class _AvatarState extends State<Avatar> {
       children: <Widget>[
         SingleChildScrollView(child: imageView(context),) ,
         RaisedButton(
-          onPressed: showCar,
+          onPressed: () => pickImg('takePhote'),
           child: Text('拍照')
         ),
         RaisedButton(
-          onPressed: show,
+          onPressed: () => pickImg('gallery'),
           child: Text('选择相册')
         )
       ],
@@ -36,57 +37,46 @@ class _AvatarState extends State<Avatar> {
   }
 
   Widget imageView(BuildContext context) {
-    if (_imgPath == null || showCircle == 1) {
+    if (_imgPath == null && !showCircle) {
       return Center(
         child: Text('请选择图片或拍照'),
       );
-    } else if(_imgPath == null || showCircle != 2 ) {
+    } else if (_imgPath != null) {
+      return Center(
+          child: Container(
+              color: Colors.black,
+              padding: const EdgeInsets.all(20.0),
+              child: Crop(
+                key: cropKey,
+                image: FileImage(_imgPath),
+                aspectRatio: 4.0 / 3.0,
+              ),
+          )
+          // FadeInImage(
+          //   placeholder: AssetImage("images/loading.gif"),
+          //   image: FileImage(_imgPath),
+          //   height: 375,
+          //   width: 375,
+          // )
+      ); 
+    } else {
       return Center(
         child: Image.asset("images/loading.gif",
           width: 375.0,
           height: 375,
         )
       );
-    } else {
-      return Center(
-          child: FadeInImage(
-            placeholder: AssetImage("images/loading.gif"),
-            image: FileImage(_imgPath),
-            height: 375,
-            width: 375,
-          )
-      ); 
     }
-  }
+  }  
 
-  void _takePhoto() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.camera);
+  void pickImg(String action) async{
     setState(() {
-      showCircle = 2;
-      _imgPath = image;
+      _imgPath = null;
+      showCircle = true;
     });
-  }
-
-  void show() {
+    var image = await (action == 'gallery' ? ImagePicker.pickImage(source: ImageSource.gallery) : ImagePicker.pickImage(source: ImageSource.camera));
     setState(() {
-      showImg = true;
-      showCircle = 1;
-    });
-    _openGallery();
-  }
-
-  void showCar() {
-    setState(() {
-      showImg = true;
-      showCircle = 1;
-    });
-    _takePhoto();
-  }
-
-  Future _openGallery() async {
-    var image = await ImagePicker.pickImage(source: ImageSource.gallery);
-    setState(() {
-      showCircle = 2;
+      showCircle = false;
       _imgPath = image;
     });
   }
