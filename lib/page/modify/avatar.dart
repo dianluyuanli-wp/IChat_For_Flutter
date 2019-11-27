@@ -4,7 +4,10 @@ import '../../global.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'dart:io';
-import 'dart:convert';
+import '../../tools/base64.dart';
+import 'package:image/image.dart' as img;
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
 
 class Avatar extends StatefulWidget {
   Avatar({Key key, @required this.handler, @required this.modifyFunc}) 
@@ -18,6 +21,7 @@ class Avatar extends StatefulWidget {
 
 class _AvatarState extends State<Avatar> {
   var _imgPath;
+  var baseImg;
   bool showCircle = false;
 
   @override
@@ -39,7 +43,7 @@ class _AvatarState extends State<Avatar> {
             RaisedButton(
               onPressed: getBase64,
               child: Text('获取base64')
-            )
+            ),
           ],
         )
       ],
@@ -72,11 +76,15 @@ class _AvatarState extends State<Avatar> {
   }
 
   void getBase64() async {
-    print(_imgPath.path);
-    File file = new File(_imgPath.path);
-    List<int> imageBytes = await file.readAsBytes();
-    print(base64Encode(imageBytes).toString());
-    //return base64Encode(imageBytes);
+    //  生成图片实体
+    final img.Image image = img.decodeImage(File(_imgPath.path).readAsBytesSync());
+    //  缓存文件夹
+    Directory tempDir = await getTemporaryDirectory();
+    String tempPath = tempDir.path; // 临时文件夹
+    //  创建文件
+    final File imageFile = File(path.join(tempPath, 'dart.png')); // 保存在应用文件夹内
+    await imageFile.writeAsBytes(img.encodePng(image)); 
+    print(await Util.imageFile2Base64(imageFile));
   }  
 
   void pickImg(String action) async{
@@ -84,7 +92,7 @@ class _AvatarState extends State<Avatar> {
       _imgPath = null;
       showCircle = true;
     });
-    var image = await (action == 'gallery' ? ImagePicker.pickImage(source: ImageSource.gallery) : ImagePicker.pickImage(source: ImageSource.camera));
+    File image = await (action == 'gallery' ? ImagePicker.pickImage(source: ImageSource.gallery) : ImagePicker.pickImage(source: ImageSource.camera));
     File croppedFile = await ImageCropper.cropImage(
       sourcePath: image.path,
       aspectRatio: CropAspectRatio(ratioX: 1, ratioY:1),

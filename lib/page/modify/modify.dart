@@ -7,6 +7,11 @@ import 'avatar.dart';
 import 'package:toast/toast.dart';
 import '../../tools/network.dart';
 
+import '../../tools/base64.dart';
+import 'package:image/image.dart' as img;
+import 'package:path/path.dart' as path;
+import 'package:path_provider/path_provider.dart';
+
 class Modify extends StatefulWidget {
   @override
   _ModifyState createState() => new _ModifyState();
