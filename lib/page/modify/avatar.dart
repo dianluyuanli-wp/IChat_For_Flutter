@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../global.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'dart:io';
@@ -40,10 +38,10 @@ class _AvatarState extends State<Avatar> {
               onPressed: () => pickImg('gallery'),
               child: Text('选择相册')
             ),
-            RaisedButton(
-              onPressed: getBase64,
-              child: Text('获取base64')
-            ),
+            // RaisedButton(
+            //   onPressed: getBase64,
+            //   child: Text('获取base64')
+            // ),
           ],
         )
       ],
@@ -75,7 +73,7 @@ class _AvatarState extends State<Avatar> {
     }
   }
 
-  void getBase64() async {
+  Future<String> getBase64() async {
     //  生成图片实体
     final img.Image image = img.decodeImage(File(_imgPath.path).readAsBytesSync());
     //  缓存文件夹
@@ -83,8 +81,8 @@ class _AvatarState extends State<Avatar> {
     String tempPath = tempDir.path; // 临时文件夹
     //  创建文件
     final File imageFile = File(path.join(tempPath, 'dart.png')); // 保存在应用文件夹内
-    await imageFile.writeAsBytes(img.encodePng(image)); 
-    print(await Util.imageFile2Base64(imageFile));
+    await imageFile.writeAsBytes(img.encodePng(image));
+    return 'data:image/png;base64,' + await Util.imageFile2Base64(imageFile);
   }  
 
   void pickImg(String action) async{
@@ -115,5 +113,7 @@ class _AvatarState extends State<Avatar> {
       showCircle = false;
       _imgPath = croppedFile;
     });
+    widget.handler(true);
+    widget.modifyFunc('avatar', await getBase64());
   }
 }
