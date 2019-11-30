@@ -8,7 +8,9 @@ Map apiMap = {
   //  获取用户信息
   'userInfo': 'userInfo',
   //  更新用户信息
-  'updateUserInfo': 'updateUserInfo'
+  'updateUserInfo': 'updateUserInfo',
+  //  查询用户
+  'searchName': 'searchName'
 };
 
 String domain = 'http://tangshisanbaishou.xyz/api/';

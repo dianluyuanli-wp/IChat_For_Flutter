@@ -4,7 +4,7 @@ import '../../global.dart';
 import 'nickname.dart';
 import 'password.dart';
 import 'avatar.dart';
-import 'package:toast/toast.dart';
+import '../../tools/utils.dart';
 import '../../tools/network.dart';
 
 class Modify extends StatefulWidget {
@@ -45,11 +45,11 @@ class _ModifyState extends State<Modify> {
     }
     if (key == 'passWord') {
       if (newContent['passWord'] != newContent['newPassWordAgain']) {
-        Toast.show('两次新密码输入不一致', context, duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
+        showToast('两次新密码输入不一致', context);
         return;
       }
       if (!await userVerify(Provider.of<UserModle>(context).user, newContent['originPassWord'])) {
-        Toast.show('老密码错误', context, duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
+        showToast('老密码错误', context);
         return;
       }
     }
@@ -63,7 +63,7 @@ class _ModifyState extends State<Modify> {
       Provider.of<UserModle>(context).nickName = newContent[key];
     }
     if (res.toString() == 'success') {
-      Toast.show('修改成功', context, duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
+      showToast('修改成功', context);
     }
   }
 

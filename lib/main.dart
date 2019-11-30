@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 //import 'model/User.dart';
 import 'global.dart';
+import 'page/findFriend.dart';
 import 'page/modify/modify.dart';
 
 void main() => Global.init().then((e) => runApp(MyApp()));
@@ -127,7 +128,7 @@ class MiddleContent extends StatelessWidget {
           },
         )
       ),
-      1: Text('找朋友'),
+      1: FindFriend(),
       2: MyAccount()
     };
     return contentMap[index];
