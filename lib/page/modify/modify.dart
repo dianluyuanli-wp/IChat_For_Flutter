@@ -62,7 +62,10 @@ class _ModifyState extends State<Modify> {
     if (key == 'nickName') {
       Provider.of<UserModle>(context).nickName = newContent[key];
     }
-    if (res.toString() == 'success') {
+    if (key == 'avatar') {
+      Provider.of<UserModle>(context).avatar = res['data']['imgUrl'];
+    }
+    if (res['status'].toString() == 'success') {
       Toast.show('修改成功', context, duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
     }
   }
