@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:toast/toast.dart';
+import '../tools/utils.dart';
 import '../global.dart';
 import '../tools/network.dart';
 import 'package:dio/dio.dart';
@@ -110,7 +110,7 @@ class _LogInState extends State<LogIn> {
       print(Provider.of<UserModle>(context).nickName);
       Provider.of<UserModle>(context).isLogin = true;
     } else {
-      Toast.show('账号密码错误', context, duration: Toast.LENGTH_LONG, gravity: Toast.CENTER);
+      showToast('账号密码错误', context);
     }
   }
 }

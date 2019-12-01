@@ -15,9 +15,15 @@ class PersonInfoBar extends StatelessWidget {
       ),
       child: Row(
         children: <Widget>[
-          Image(
-            image: CachedNetworkImageProvider(infoMap['avatar']),
+          Container(
             height: 70,
+            padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
+            child: Image(
+              image: CachedNetworkImageProvider(infoMap['avatar']),
+              height: 50,
+              width: 50,
+              fit: BoxFit.fill
+            ),
           ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
