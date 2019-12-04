@@ -103,12 +103,15 @@ class _LogInState extends State<LogIn> {
 
   void _onLogin () async {
     String userName = _unameController.text;
-    Provider.of<UserModle>(context).user = userName;
+    var globalStore = Provider.of<UserModle>(context);
+    globalStore.user = userName;
+    Map<String, String> name = { 'userName' : userName };
     if (await userVerify(_unameController.text, _pwdController.text)) {
-      Response info = await Network.get('userInfo', {'userName' : userName});
-      Provider.of<UserModle>(context).apiUpdate(info.data);
-      print(Provider.of<UserModle>(context).nickName);
-      Provider.of<UserModle>(context).isLogin = true;
+      Response info = await Network.get('userInfo', name);
+      globalStore.apiUpdate(info.data);
+      globalStore.isLogin = true;
+      Response message = await Network.get('getAllMessage', name);
+      print(message.data);
     } else {
       showToast('账号密码错误', context);
     }

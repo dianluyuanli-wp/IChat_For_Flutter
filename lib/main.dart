@@ -7,6 +7,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'global.dart';
 import 'page/findFriend.dart';
 import 'page/modify/modify.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() => Global.init().then((e) => runApp(MyApp()));
 
@@ -14,6 +15,11 @@ class MyApp extends StatelessWidget {
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
+    // IO.Socket socket = IO.io('http://tangshisanbaishou.xyz', <String, dynamic>{
+    //   'transports': ['websocket'],
+    //   'path': '/mySocket'
+    // });
+    // socket.emit('register', 'wang');
     return MultiProvider(
       providers: [
         ListenableProvider<UserModle>.value(value: new UserModle())

@@ -10,7 +10,9 @@ Map apiMap = {
   //  更新用户信息
   'updateUserInfo': 'updateUserInfo',
   //  查询用户
-  'searchName': 'searchName'
+  'searchName': 'searchName',
+  //  获取所有聊天记录（前几条）
+  'getAllMessage': 'getAllMessage'
 };
 
 String domain = 'http://tangshisanbaishou.xyz/api/';
