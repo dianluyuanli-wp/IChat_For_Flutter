@@ -103,7 +103,8 @@ class _LogInState extends State<LogIn> {
 
   void _onLogin () async {
     String userName = _unameController.text;
-    var globalStore = Provider.of<UserModle>(context);
+    UserModle globalStore = Provider.of<UserModle>(context);
+    Message globalMessage = Provider.of<Message>(context);
     globalStore.user = userName;
     Map<String, String> name = { 'userName' : userName };
     if (await userVerify(_unameController.text, _pwdController.text)) {
@@ -111,7 +112,8 @@ class _LogInState extends State<LogIn> {
       globalStore.apiUpdate(info.data);
       globalStore.isLogin = true;
       Response message = await Network.get('getAllMessage', name);
-      print(message.data);
+      globalMessage.assignFromJson(message.data);
+      print(globalMessage.messageArray[0].message[0].content);
     } else {
       showToast('账号密码错误', context);
     }

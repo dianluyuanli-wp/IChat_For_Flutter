@@ -110,4 +110,53 @@ class UserModle extends ProfileChangeNotifier {
   }
 
   Map get modelJson => _profile.toJson();
-} 
+}
+
+class MessageNotifier extends ChangeNotifier {
+  @override
+  void notifyListeners() {
+    super.notifyListeners();
+  }
+}
+
+class SingleMessage {
+  String owner;
+  String content;
+  int timeStamp;
+
+  SingleMessage.fromJson(Map json) {
+    owner = json['owner'];
+    content = json['content'];
+    timeStamp = json['timeStamp'];
+  }
+}
+
+class SingleMesCollection {
+  String bothOwner;
+  List<SingleMessage> message;
+  int user1flag;
+  int user2flag;
+
+  SingleMesCollection.fromJson(Map json) {
+    bothOwner = json['bothOwner'];
+    message = json['message'].map<SingleMessage>((item) {
+      return SingleMessage.fromJson(item);
+    }).toList();
+    user1flag = json['user1flag'];
+    user2flag = json['user2flag'];
+  }
+}
+
+class Message extends MessageNotifier {
+  Message();
+  List<SingleMesCollection> messageArray;
+  void assignFromJson(List json) {
+    messageArray = json.map((item) {
+      return SingleMesCollection.fromJson(item);
+    }).toList();
+  }
+
+  String getLastMessage(String name) {
+    return messageArray.firstWhere((item) => (item.bothOwner.contains(name))).message.last.content;
+  }
+}

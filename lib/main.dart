@@ -22,7 +22,8 @@ class MyApp extends StatelessWidget {
     // socket.emit('register', 'wang');
     return MultiProvider(
       providers: [
-        ListenableProvider<UserModle>.value(value: new UserModle())
+        ListenableProvider<UserModle>.value(value: new UserModle()),
+        ListenableProvider<Message>.value(value: new Message())
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
