@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import './tools/network.dart';
+import 'package:dio/dio.dart';
 
 class Profile {
   String user = '';
@@ -42,14 +44,24 @@ class Global {
 
   static Future init() async {
     _prefs = await SharedPreferences.getInstance();
-    var _profile = _prefs.getString('profile');
+
+    String _profile = _prefs.getString('profile');
+    //  如果存在用户，则拉取聊天记录
+    Map decodeContent = jsonDecode(_profile ?? '');
+    Response message;
+    if (decodeContent['user'].isNotEmpty) {
+      message = await Network.get('getAllMessage', { 'userName' : decodeContent['user'] });
+    }
     if (_profile != null) {
       try {
-        profile = Profile.fromJson(jsonDecode(_profile));
+        profile = Profile.fromJson(decodeContent);
       } catch (e) {
         print(e);
       }
     }
+    return {
+      'messageArray': message.data ?? []
+    };
   }
 
   static saveProfile() => _prefs.setString('profile', jsonEncode(profile.toJson()));
@@ -110,6 +122,13 @@ class UserModle extends ProfileChangeNotifier {
   }
 
   Map get modelJson => _profile.toJson();
+
+  String toUser = '123';
+  String get sayTo => toUser;
+  set sayTo(String value) {
+    toUser = value;
+    notifyListeners();
+  }
 }
 
 class MessageNotifier extends ChangeNotifier {
@@ -156,7 +175,17 @@ class Message extends MessageNotifier {
     }).toList();
   }
 
+  Message.fromJson(List json) {
+    messageArray = json.map<SingleMesCollection>((item) {
+      return SingleMesCollection.fromJson(item);
+    }).toList();
+  }
+
   String getLastMessage(String name) {
     return messageArray.firstWhere((item) => (item.bothOwner.contains(name))).message.last.content;
+  }
+
+  SingleMesCollection getUserMesCollection(String name) {
+    return messageArray.firstWhere((item) => (item.bothOwner.contains(name)));
   }
 }

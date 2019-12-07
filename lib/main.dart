@@ -2,16 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:i_chat/page/myAccount.dart';
 import 'page/logIn.dart';
 import 'package:provider/provider.dart';
-import 'package:cached_network_image/cached_network_image.dart';
-//import 'model/User.dart';
 import 'global.dart';
 import 'page/findFriend.dart';
 import 'page/modify/modify.dart';
+import 'page/friendList.dart';
+import 'page/chat.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
-void main() => Global.init().then((e) => runApp(MyApp()));
+void main() => Global.init().then((e) => runApp(MyApp(info: e)));
 
 class MyApp extends StatelessWidget {
+
+  MyApp({Key key, this.info}) : super(key: key);
+  final info;
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
@@ -20,10 +23,11 @@ class MyApp extends StatelessWidget {
     //   'path': '/mySocket'
     // });
     // socket.emit('register', 'wang');
+    //print(info);
     return MultiProvider(
       providers: [
         ListenableProvider<UserModle>.value(value: new UserModle()),
-        ListenableProvider<Message>.value(value: new Message())
+        ListenableProvider<Message>.value(value: Message.fromJson(info['messageArray']))
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -42,7 +46,6 @@ class MyApp extends StatelessWidget {
         initialRoute: '/',
         routes: {
           '/': (context) => Provider.of<UserModle>(context).isLogin ? MyHomePage() : LogIn(),
-          //MyHomePage(),
           'chat': (context) => Chat(),
           'modify': (context) => Modify(),
         }
@@ -93,56 +96,11 @@ class MiddleContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final contentMap = {
-      0: Scrollbar(
-        child: ListView.separated(
-          itemCount: Provider.of<UserModle>(context).friendsList.length,
-          itemBuilder: (BuildContext context, int index) {
-            //return ListTile(title: Text('$index'), onTap: () => {enterTalk(context)});
-            Map friendInfo = Provider.of<UserModle>(context).friendsList[index];
-            return GestureDetector(
-              child: Container(
-                constraints: BoxConstraints(
-                  minWidth: 360,
-                  maxHeight: 55
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.black12
-                ),
-                child: Row(
-                  children: <Widget>[
-                    Image(
-                      image: CachedNetworkImageProvider(friendInfo['avatar']),
-                      width: 50,
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        Container(
-                          margin: EdgeInsets.fromLTRB(0, 7, 0, 7),
-                          child: Text(friendInfo['nickName']),
-                        ),
-                        Text('大家好1111111111111')
-                      ],
-                    )
-                  ],
-                ),
-              ),
-              onTap: () => {enterTalk(context)}
-            );
-          },
-          separatorBuilder: (BuildContext contet, int index) {
-            return index % 2 == 0 ? Divider(color: Colors.blue) : Divider(color: Colors.green,);
-          },
-        )
-      ),
+      0: FriendList(),
       1: FindFriend(),
       2: MyAccount()
     };
     return contentMap[index];
-  }
-
-  void enterTalk(context) {
-    Navigator.pushNamed(context, 'chat');
   }
 }
 
@@ -160,36 +118,6 @@ class TitleContent extends StatelessWidget {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center, 
       children: <Widget>[Text(contentMap[index])]
-    );
-  }
-}
-
-class Chat extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Container(
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              // IconButton(
-              //   icon: Icon(Icons.find_replace, color: Colors.white),
-              //   onPressed: () => Navigator.pop(context),
-              // ),
-              Transform.translate(
-                offset: Offset(-30, 0),
-                child: Text('聊天'),
-              ),
-            ],
-          ),
-        ),
-      ),
-      body: Center(
-        child: Text('小明和女神聊天'),
-      ),
     );
   }
 }

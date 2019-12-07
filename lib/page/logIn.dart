@@ -111,9 +111,9 @@ class _LogInState extends State<LogIn> {
       Response info = await Network.get('userInfo', name);
       globalStore.apiUpdate(info.data);
       globalStore.isLogin = true;
+      //  重新登录的时候也要拉取聊天记录
       Response message = await Network.get('getAllMessage', name);
       globalMessage.assignFromJson(message.data);
-      print(globalMessage.messageArray[0].message[0].content);
     } else {
       showToast('账号密码错误', context);
     }
