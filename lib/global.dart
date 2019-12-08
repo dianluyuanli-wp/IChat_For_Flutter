@@ -46,21 +46,19 @@ class Global {
     _prefs = await SharedPreferences.getInstance();
 
     String _profile = _prefs.getString('profile');
-    //  如果存在用户，则拉取聊天记录
-    Map decodeContent = jsonDecode(_profile ?? '');
     Response message;
-    if (decodeContent['user'].isNotEmpty) {
-      message = await Network.get('getAllMessage', { 'userName' : decodeContent['user'] });
-    }
     if (_profile != null) {
       try {
+        //  如果存在用户，则拉取聊天记录
+        Map decodeContent = jsonDecode(_profile != null ? _profile : '');
         profile = Profile.fromJson(decodeContent);
+        message = await Network.get('getAllMessage', { 'userName' : decodeContent['user'] });
       } catch (e) {
         print(e);
       }
     }
     return {
-      'messageArray': message.data ?? []
+      'messageArray': message != null ? message.data : []
     };
   }
 

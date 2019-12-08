@@ -9,7 +9,7 @@ class Chat extends StatefulWidget {
   _ChatState createState() => _ChatState();
 }
 class _ChatState extends State<Chat> {
-  ScrollController _scrollController = ScrollController();
+  ScrollController _scrollController = ScrollController(initialScrollOffset: 900.0);
   bool isLoading = false;
 
   @override
@@ -48,12 +48,11 @@ class _ChatState extends State<Chat> {
       body: Center(
         child: ListView.builder(
           itemBuilder: (BuildContext context, int index) {
-            return Text(Provider.of<Message>(context).getUserMesCollection(sayTo).message[index].content);
+            return MessageContent(info: Provider.of<Message>(context).getUserMesCollection(sayTo).message[index]);
           },
           itemCount: Provider.of<Message>(context).getUserMesCollection(sayTo).message.length,
           controller: _scrollController,
         ),
-
       ),
     );
   }
