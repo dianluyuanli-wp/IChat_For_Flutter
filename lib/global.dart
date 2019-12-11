@@ -127,6 +127,10 @@ class UserModle extends ProfileChangeNotifier {
     toUser = value;
     notifyListeners();
   }
+
+  Map findFriendInfo(name) {
+    return friendsList.firstWhere((item) => name == item['userName']);
+  }
 }
 
 class MessageNotifier extends ChangeNotifier {
@@ -150,17 +154,19 @@ class SingleMessage {
 
 class SingleMesCollection {
   String bothOwner;
-  List<SingleMessage> message;
+  List<SingleMessage> message = [];
   int user1flag;
   int user2flag;
+
+  SingleMesCollection();
 
   SingleMesCollection.fromJson(Map json) {
     bothOwner = json['bothOwner'];
     message = json['message'].map<SingleMessage>((item) {
       return SingleMessage.fromJson(item);
     }).toList();
-    user1flag = json['user1flag'];
-    user2flag = json['user2flag'];
+    user1flag = json['user1_flag'];
+    user2flag = json['user2_flag'];
   }
 }
 
@@ -184,6 +190,6 @@ class Message extends MessageNotifier {
   }
 
   SingleMesCollection getUserMesCollection(String name) {
-    return messageArray.firstWhere((item) => (item.bothOwner.contains(name)));
+    return messageArray.firstWhere((item) => item.bothOwner.contains(name), orElse: () => new SingleMesCollection());
   }
 }

@@ -12,7 +12,9 @@ Map apiMap = {
   //  查询用户
   'searchName': 'searchName',
   //  获取所有聊天记录（前几条）
-  'getAllMessage': 'getAllMessage'
+  'getAllMessage': 'getAllMessage',
+  //  查询更多记录
+  'getMoreMessage': 'getMoreMessage'
 };
 
 String domain = 'http://tangshisanbaishou.xyz/api/';
