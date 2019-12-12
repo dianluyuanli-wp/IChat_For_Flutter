@@ -20,7 +20,8 @@ class _ChatState extends State<Chat> {
   void initState() {
     super.initState();
     _scrollController.addListener(() {
-      if (_scrollController.position.pixels == _scrollController.position.minScrollExtent) {
+      if (_scrollController.position.pixels <= 10) {
+        print(_scrollController.position.minScrollExtent);
         _getMoreMessage();
       }
     });
@@ -36,11 +37,14 @@ class _ChatState extends State<Chat> {
   }
 
   _getMoreMessage() async {
+    print('scroll');
     if (!isLoading) {
+      if (acculateReqLength == 0) {
+        return;
+      }
       setState(() {
        isLoading = true;
       });
-      print('get');
       String sayTo = Provider.of<UserModle>(context).sayTo;
       SingleMesCollection collection = Provider.of<Message>(context).getUserMesCollection(sayTo);
       var res = await Network.get('getMoreMessage', {
@@ -53,7 +57,6 @@ class _ChatState extends State<Chat> {
         return SingleMessage.fromJson(item);
       }).toList();
       collection.message.insertAll(0, addList);
-      // print(addList);
       setState(() {
        isLoading = false;
       });
@@ -89,7 +92,24 @@ class _ChatState extends State<Chat> {
               color: Color(0xfff5f5f5),
               child: ListView.builder(
                 itemBuilder: (BuildContext context, int index) {
-                  return MessageContent(info: Provider.of<Message>(context).getUserMesCollection(sayTo).message[index]);
+                  //  滚动的菊花
+                  if (index == 0) {
+                    return acculateReqLength == 0
+                    ? Center(
+                      child: Text('一一没有更多消息了一一')
+                    )
+                    : Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: new Center(
+                        child: new Opacity(
+                          opacity: isLoading ? 1.0 : 0.0,
+                          child: new CircularProgressIndicator(),
+                        ),
+                        //child: new CircularProgressIndicator()
+                      ),
+                    );
+                  }
+                  return MessageContent(mesList: Provider.of<Message>(context).getUserMesCollection(sayTo).message, rank:index);
                 },
                 itemCount: Provider.of<Message>(context).getUserMesCollection(sayTo).message.length,
                 controller: _scrollController,
@@ -134,18 +154,21 @@ class _ChatState extends State<Chat> {
 }
 
 class MessageContent extends StatelessWidget {
-  MessageContent({Key key, this.info}) : super(key: key);
-  final SingleMessage info;
+  MessageContent({Key key, this.mesList, this.rank}) : super(key: key);
+  final List<SingleMessage> mesList;
+  final int rank;
 
   @override
   Widget build(BuildContext context) {
     UserModle userModel = Provider.of<UserModle>(context);
     String image = userModel.avatar;
+    SingleMessage info = mesList[rank];
     bool showOnLeft = info.owner != userModel.user;
+    bool showTimeOrNot = rank < mesList.length ? info.timeStamp - mesList[rank + 1].timeStamp > 10 *60 * 1000 : true;
     return Container(
       child: Column(
         children: <Widget>[
-          Text('time'),
+          showTimeOrNot ? Text('time') : null,
           Row(
             textDirection: showOnLeft ? TextDirection.ltr : TextDirection.rtl,
             children: <Widget>[
