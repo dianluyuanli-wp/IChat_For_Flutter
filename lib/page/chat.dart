@@ -1,6 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:i_chat/page/modify/avatar.dart';
+import '../tools/utils.dart';
 import 'package:provider/provider.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../global.dart';
@@ -162,13 +162,24 @@ class MessageContent extends StatelessWidget {
   Widget build(BuildContext context) {
     UserModle userModel = Provider.of<UserModle>(context);
     String image = userModel.avatar;
-    SingleMessage info = mesList[rank];
+    int trueRank = rank - 1;
+    SingleMessage info = mesList[trueRank];
     bool showOnLeft = info.owner != userModel.user;
-    bool showTimeOrNot = rank < mesList.length ? info.timeStamp - mesList[rank + 1].timeStamp > 10 *60 * 1000 : true;
+    bool showTimeOrNot = trueRank > 0 ? info.timeStamp - mesList[trueRank - 1].timeStamp > 10 * 60 * 1000 : true;
     return Container(
       child: Column(
         children: <Widget>[
-          showTimeOrNot ? Text('time') : null,
+          showTimeOrNot ? Container(
+            child: Text(getIimeStringForChat(info.timeStamp), style: TextStyle(
+              color: Color(0xffffffff)
+            )),
+            margin: EdgeInsets.symmetric(vertical: 5),
+            padding: EdgeInsets.symmetric(horizontal: 2),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(2),
+              color: Color(0xffdadada),
+            ),
+          ) : null,
           Row(
             textDirection: showOnLeft ? TextDirection.ltr : TextDirection.rtl,
             children: <Widget>[
@@ -191,7 +202,7 @@ class MessageContent extends StatelessWidget {
               )
             ],
           )
-        ],
+        ].where((item) => item != null).toList(),
       ),
     );
   }
