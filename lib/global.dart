@@ -145,6 +145,8 @@ class SingleMessage {
   String content;
   int timeStamp;
 
+  SingleMessage(this.owner, this.content, this.timeStamp);
+
   SingleMessage.fromJson(Map json) {
     owner = json['owner'];
     content = json['content'];
@@ -186,7 +188,7 @@ class Message extends MessageNotifier {
   }
 
   String getLastMessage(String name) {
-    return messageArray.firstWhere((item) => (item.bothOwner.contains(name))).message.last.content;
+    return messageArray.firstWhere((item) => (item.bothOwner.contains(name)), orElse: () => new SingleMesCollection()).message.last.content;
   }
 
   SingleMesCollection getUserMesCollection(String name) {

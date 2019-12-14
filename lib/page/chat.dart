@@ -32,7 +32,8 @@ class _ChatState extends State<Chat> {
     SingleMesCollection mesCollection = Provider.of<Message>(context).getUserMesCollection(sayTo);
     int user1flag = mesCollection.user1flag;
     int user2flag = mesCollection.user2flag;
-    int diff = max(user1flag, user2flag) - mesCollection.message.length;
+    int currentMesLength = mesCollection.message.length;
+    int diff = max(user1flag ?? currentMesLength, user2flag ?? currentMesLength) - currentMesLength;
     return diff > 15 ? 15 : (diff > 0 ? diff : 0);
   }
 
@@ -65,7 +66,8 @@ class _ChatState extends State<Chat> {
 
   @override
   Widget build(BuildContext context) {
-    String sayTo = Provider.of<UserModle>(context).sayTo;
+    UserModle myInfo = Provider.of<UserModle>(context);
+    String sayTo = myInfo.sayTo;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -80,7 +82,7 @@ class _ChatState extends State<Chat> {
               // ),
               Transform.translate(
                 offset: Offset(-30, 0),
-                child: Text('聊天'),
+                child: Text(sayTo),
               ),
             ],
           ),
@@ -120,16 +122,15 @@ class _ChatState extends State<Chat> {
             key: _formKey,
             child: Container(
               color: Color(0xfff5f5f5),
-              //margin: EdgeInsets.only(top: 15),
               child: TextFormField(
                 autofocus: false,
+                maxLines: 3,
+                minLines: 1,
                 controller: _messController,
                 decoration: InputDecoration(
-                  // labelText: 'chatId',
                   hintText: 'You wanna to say',
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
-                      //borderSide: BorderSide.none
                   ),
                   prefixIcon: Icon(Icons.people),
                   suffixIcon: IconButton(
@@ -149,6 +150,8 @@ class _ChatState extends State<Chat> {
   }
 
   void sendMess() {
+    UserModle myInfo = Provider.of<UserModle>(context);
+    SingleMessage newMess = new SingleMessage(myInfo.user, _messController.text, new DateTime.now().millisecond);
     print(_messController.text);
   }
 }
