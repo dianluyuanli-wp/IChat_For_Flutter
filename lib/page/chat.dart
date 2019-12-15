@@ -21,7 +21,6 @@ class _ChatState extends State<Chat> {
     super.initState();
     _scrollController.addListener(() {
       if (_scrollController.position.pixels <= 10) {
-        print(_scrollController.position.minScrollExtent);
         _getMoreMessage();
       }
     });
@@ -38,7 +37,6 @@ class _ChatState extends State<Chat> {
   }
 
   _getMoreMessage() async {
-    print('scroll');
     if (!isLoading) {
       if (acculateReqLength == 0) {
         return;
@@ -152,7 +150,17 @@ class _ChatState extends State<Chat> {
   void sendMess() {
     UserModle myInfo = Provider.of<UserModle>(context);
     SingleMessage newMess = new SingleMessage(myInfo.user, _messController.text, new DateTime.now().millisecond);
-    print(_messController.text);
+    Provider.of<Message>(context).getUserMesCollection(myInfo.sayTo).message.add(newMess);
+        // 保证在组件build的第一帧时才去触发取消清空内容
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+        _messController.clear();
+    });
+    FocusScope.of(context).requestFocus(FocusNode());
+    print(_scrollController.offset);
+    _scrollController.jumpTo(_scrollController.offset);
+    // _messController.clear();
+    // _messController.clearComposing();
+    //_messController.text = '';
   }
 }
 
