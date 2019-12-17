@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './tools/network.dart';
 import 'package:dio/dio.dart';
+import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Profile {
   String user = '';
@@ -57,8 +58,13 @@ class Global {
         print(e);
       }
     }
+    IO.Socket socket = IO.io('http://tangshisanbaishou.xyz', <String, dynamic>{
+      'transports': ['websocket'],
+      'path': '/mySocket'
+    });
     return {
-      'messageArray': message != null ? message.data : []
+      'messageArray': message != null ? message.data : [],
+      'socketIO': socket
     };
   }
 
@@ -131,6 +137,11 @@ class UserModle extends ProfileChangeNotifier {
   Map findFriendInfo(name) {
     return friendsList.firstWhere((item) => name == item['userName']);
   }
+}
+
+class MySocketIO {
+  IO.Socket mySocket;
+  MySocketIO(this.mySocket);
 }
 
 class MessageNotifier extends ChangeNotifier {

@@ -12,13 +12,14 @@ String getYearMounthDate(int timeStamp) {
   return time.year.toString() + '-' + (month.length == 1 ? '0' : '') + month + '-' + (date.length == 1 ? '0' : '') + date;
 }
 
-
-List<String> dayMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+//  dart里面weekday是从1开始自增的，1代表周一
+List<String> dayMap = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 int oneDayMillSec = 24 * 3600 * 1000;
 
 //  获得时间标签
 String getIimeStringForChat(int timeStamp) {
-    int currentDateStamp = new DateTime.now().millisecondsSinceEpoch;
+    int currentTimeStamp = new DateTime.now().millisecondsSinceEpoch; 
+    int currentDateStamp = DateTime.parse(getYearMounthDate(currentTimeStamp)).millisecondsSinceEpoch;
     int timeGap = currentDateStamp - timeStamp;
     String res = new RegExp(r"(\d{2}:\d{2}:\d{2})").stringMatch(DateTime.fromMillisecondsSinceEpoch(timeStamp).toString());
     String prefix = '';

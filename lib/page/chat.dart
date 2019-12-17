@@ -15,6 +15,7 @@ class _ChatState extends State<Chat> {
   bool isLoading = false;
   TextEditingController _messController = new TextEditingController();
   GlobalKey _formKey = new GlobalKey<FormState>();
+  bool canSend = false;
 
   @override
   void initState() {
@@ -105,13 +106,12 @@ class _ChatState extends State<Chat> {
                           opacity: isLoading ? 1.0 : 0.0,
                           child: new CircularProgressIndicator(),
                         ),
-                        //child: new CircularProgressIndicator()
                       ),
                     );
                   }
                   return MessageContent(mesList: Provider.of<Message>(context).getUserMesCollection(sayTo).message, rank:index);
                 },
-                itemCount: Provider.of<Message>(context).getUserMesCollection(sayTo).message.length,
+                itemCount: Provider.of<Message>(context).getUserMesCollection(sayTo).message.length + 1,
                 controller: _scrollController,
               ),
             )
@@ -124,6 +124,7 @@ class _ChatState extends State<Chat> {
                 autofocus: false,
                 maxLines: 3,
                 minLines: 1,
+                autovalidate: true,
                 controller: _messController,
                 decoration: InputDecoration(
                   hintText: 'You wanna to say',
@@ -132,12 +133,20 @@ class _ChatState extends State<Chat> {
                   ),
                   prefixIcon: Icon(Icons.people),
                   suffixIcon: IconButton(
-                    icon: Icon(Icons.message),
+                    icon: Icon(Icons.message, color: canSend ? Colors.blue : Colors.grey),
                     onPressed: sendMess,
                   )
                 ),
                 validator: (v) {
-                  return v.trim().isNotEmpty ? null : 'please input the chatId you want to search';
+                  bool isEmpty = v.trim().isNotEmpty;
+                  Future.delayed(Duration(milliseconds: 100)).then((e) {
+                    if(mounted) {
+                      setState(() {
+                      canSend = isEmpty;
+                      });
+                    }
+                  });
+                  return null;
                 },
               )
             )
@@ -148,19 +157,19 @@ class _ChatState extends State<Chat> {
   }
 
   void sendMess() {
+    if (!canSend) {
+      return;
+    }
     UserModle myInfo = Provider.of<UserModle>(context);
-    SingleMessage newMess = new SingleMessage(myInfo.user, _messController.text, new DateTime.now().millisecond);
+    SingleMessage newMess = new SingleMessage(myInfo.user, _messController.text, new DateTime.now().millisecondsSinceEpoch);
     Provider.of<Message>(context).getUserMesCollection(myInfo.sayTo).message.add(newMess);
-        // 保证在组件build的第一帧时才去触发取消清空内容
+    // 保证在组件build的第一帧时才去触发取消清空内容
     WidgetsBinding.instance.addPostFrameCallback((_) {
         _messController.clear();
     });
+    //  键盘自动收起
     FocusScope.of(context).requestFocus(FocusNode());
-    print(_scrollController.offset);
-    _scrollController.jumpTo(_scrollController.offset);
-    // _messController.clear();
-    // _messController.clearComposing();
-    //_messController.text = '';
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
 }
 
@@ -205,6 +214,7 @@ class MessageContent extends StatelessWidget {
               ),
               Container(
                 padding: EdgeInsets.all(10),
+                constraints: BoxConstraints(maxWidth: 240),
                 decoration: BoxDecoration(
                   color: showOnLeft ? Color(0xffffffff) : Color(0xff98e165),
                   borderRadius: BorderRadius.circular(3.0)

@@ -26,7 +26,11 @@ class MyApp extends StatelessWidget {
     //print(info);
     return MultiProvider(
       providers: [
+        //  用户信息
         ListenableProvider<UserModle>.value(value: new UserModle()),
+        //  websocket 实例
+        Provider<MySocketIO>.value(value: new MySocketIO(info['socketIO'])),
+        //  聊天信息
         ListenableProvider<Message>.value(value: Message.fromJson(info['messageArray']))
       ],
       child: MaterialApp(

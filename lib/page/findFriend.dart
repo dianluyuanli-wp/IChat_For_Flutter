@@ -15,6 +15,7 @@ class _FindFriendState extends State<FindFriend> {
 
   @override
   Widget build(BuildContext context) {
+    Provider.of<MySocketIO>(context).mySocket.emit('register', Provider.of<UserModle>(context).user);
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
