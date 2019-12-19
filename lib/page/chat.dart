@@ -163,6 +163,7 @@ class _ChatState extends State<Chat> {
     UserModle myInfo = Provider.of<UserModle>(context);
     SingleMessage newMess = new SingleMessage(myInfo.user, _messController.text, new DateTime.now().millisecondsSinceEpoch);
     Provider.of<Message>(context).getUserMesCollection(myInfo.sayTo).message.add(newMess);
+    Provider.of<MySocketIO>(context).mySocket.emit('chat message', [myInfo.sayTo, myInfo.user, _messController.text]);
     // 保证在组件build的第一帧时才去触发取消清空内容
     WidgetsBinding.instance.addPostFrameCallback((_) {
         _messController.clear();

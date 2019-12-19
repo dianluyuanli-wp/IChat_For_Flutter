@@ -18,6 +18,7 @@ Map apiMap = {
 };
 
 String domain = 'http://tangshisanbaishou.xyz/api/';
+//String domain = 'http://localhost';
 
 class Network {
   static Future get(String api, Map<String, dynamic> dataMap) async {

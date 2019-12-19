@@ -24,14 +24,23 @@ class MyApp extends StatelessWidget {
     // });
     // socket.emit('register', 'wang');
     //print(info);
+    UserModle newUserModel = new UserModle();
+    Message messList = Message.fromJson(info['messageArray']);
+    IO.Socket mysocket = info['socketIO'];
+    mysocket.on('chat message', (msg) {
+      String owner = msg['owner'];
+      String message = msg['message'];
+      SingleMesCollection mesC = messList.getUserMesCollection(owner);
+    });
+    mysocket.emit('register', newUserModel.user);
     return MultiProvider(
       providers: [
         //  用户信息
-        ListenableProvider<UserModle>.value(value: new UserModle()),
+        ListenableProvider<UserModle>.value(value: newUserModel),
         //  websocket 实例
         Provider<MySocketIO>.value(value: new MySocketIO(info['socketIO'])),
         //  聊天信息
-        ListenableProvider<Message>.value(value: Message.fromJson(info['messageArray']))
+        ListenableProvider<Message>.value(value: messList)
       ],
       child: MaterialApp(
         title: 'Flutter Demo',

@@ -1,9 +1,11 @@
 import 'dart:convert';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:i_chat/tools/utils.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import './tools/network.dart';
 import 'package:dio/dio.dart';
+import 'dart:math';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Profile {
@@ -58,7 +60,9 @@ class Global {
         print(e);
       }
     }
-    IO.Socket socket = IO.io('http://tangshisanbaishou.xyz', <String, dynamic>{
+    String socketIODomain = 'http://tangshisanbaishou.xyz';
+    String local = 'http://localhost';
+    IO.Socket socket = IO.io(socketIODomain, <String, dynamic>{
       'transports': ['websocket'],
       'path': '/mySocket'
     });
@@ -168,8 +172,8 @@ class SingleMessage {
 class SingleMesCollection {
   String bothOwner;
   List<SingleMessage> message = [];
-  int user1flag;
-  int user2flag;
+  int user1flag = 0;
+  int user2flag = 0;
 
   SingleMesCollection();
 
@@ -180,6 +184,32 @@ class SingleMesCollection {
     }).toList();
     user1flag = json['user1_flag'];
     user2flag = json['user2_flag'];
+  }
+
+  void rankMark(String identity, String athor) {
+    if (identity == 'sender') {
+      if (isFirst(bothOwner, athor)) {
+        user1flag += 1;
+      } else {
+        user2flag += 1;
+      }
+    } else {
+      int updateNum = max(user1flag, user1flag);
+      if (isFirst(bothOwner, athor)) {
+        user1flag = updateNum;
+      } else {
+        user2flag = updateNum;
+      }
+    }
+  }
+
+  void updateMesRank(IO.Socket mysocket, String user) {
+    mysocket.emit('updateMessRank', [user, bothOwner.replaceAll(user, '').replaceAll('@', 'replace')]);
+    if (isFirst(bothOwner, user)) {
+      user1flag = user2flag;
+    } else {
+      user2flag = user1flag;
+    }
   }
 }
 

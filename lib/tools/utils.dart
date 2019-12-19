@@ -5,6 +5,10 @@ void showToast(String value, BuildContext context) {
     Toast.show(value, context, duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
 }
 
+bool isFirst(String bothOwner, String user) {
+  return bothOwner.startsWith(user);
+}
+
 String getYearMounthDate(int timeStamp) {
   DateTime time = new DateTime.fromMillisecondsSinceEpoch(timeStamp);
   String month = time.month.toString();
