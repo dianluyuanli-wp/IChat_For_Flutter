@@ -8,15 +8,17 @@ class FriendList extends StatefulWidget {
   _FriendListState createState() => _FriendListState();
 }
 
-class _FriendListState extends State<FriendList> {
+class _FriendListState extends State<FriendList> with CommonInterface {
   @override
   Widget build(BuildContext context) {
+    String iam = cUser(context);
     return Scrollbar(
         child: ListView.separated(
           itemCount: Provider.of<UserModle>(context).friendsList.length,
           itemBuilder: (BuildContext context, int index) {
             //return ListTile(title: Text('$index'), onTap: () => {enterTalk(context)});
-            Map friendInfo = Provider.of<UserModle>(context).friendsList[index];
+            Map friendInfo = cUsermodal(context).friendsList[index];
+            int flagDiff = cMesCol(context, iam).flagDiff(iam);
             return GestureDetector(
               child: Container(
                 constraints: BoxConstraints(
@@ -28,9 +30,41 @@ class _FriendListState extends State<FriendList> {
                 ),
                 child: Row(
                   children: <Widget>[
-                    Image(
-                      image: CachedNetworkImageProvider(friendInfo['avatar']),
-                      width: 50,
+                    Stack(
+                      overflow: Overflow.visible,
+                      children: <Widget>[
+                        Container(
+                          constraints: BoxConstraints(maxWidth: 40, maxHeight: 40),
+                          margin: EdgeInsets.symmetric(horizontal: 5),
+                          child: Image(
+                            image: CachedNetworkImageProvider(friendInfo['avatar']),
+                            width: 40,
+                          ),
+                        ),
+                        flagDiff > 0 ? Positioned(
+                          child: Container(
+                            padding: EdgeInsets.symmetric(horizontal: 2),
+                            constraints: BoxConstraints(
+                              minWidth: 13
+                            ),
+                            child: Text(flagDiff.toString(),
+                            textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 10
+                              ),
+                            ),
+                            //width: 20,
+                            //height: 20,
+                            decoration: BoxDecoration(
+                              color: Colors.red,
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                          ),
+                          top: -5,
+                          left: 35
+                        ) : null,
+                      ].where((item) => item != null).toList(),
                     ),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -56,7 +90,8 @@ class _FriendListState extends State<FriendList> {
   }
 
   void enterTalk(context, sayTo) {
-    Provider.of<UserModle>(context).sayTo = sayTo;
+    cUsermodal(context).sayTo = sayTo;
+    cTalkingCol(context).updateMesRank(cMysocket(context), cUser(context));
     Navigator.pushNamed(context, 'chat');
   }
 }

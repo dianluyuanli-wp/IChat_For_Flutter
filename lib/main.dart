@@ -11,26 +11,31 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() => Global.init().then((e) => runApp(MyApp(info: e)));
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatelessWidget with CommonInterface {
 
   MyApp({Key key, this.info}) : super(key: key);
   final info;
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    // IO.Socket socket = IO.io('http://tangshisanbaishou.xyz', <String, dynamic>{
-    //   'transports': ['websocket'],
-    //   'path': '/mySocket'
-    // });
-    // socket.emit('register', 'wang');
-    //print(info);
     UserModle newUserModel = new UserModle();
     Message messList = Message.fromJson(info['messageArray']);
     IO.Socket mysocket = info['socketIO'];
     mysocket.on('chat message', (msg) {
       String owner = msg['owner'];
       String message = msg['message'];
-      SingleMesCollection mesC = messList.getUserMesCollection(owner);
+      Message mesArray = Provider.of<Message>(context);
+      SingleMesCollection mesC = mesArray.getUserMesCollection(owner);
+      if (mesC.bothOwner == null) {
+        mesArray.addItemToMesArray(owner, newUserModel.user, message);
+      } else {
+        mesC.message.add(new SingleMessage(owner, message, new DateTime.now().millisecondsSinceEpoch));
+      }
+      if (ModalRoute.of(context).settings.name == 'chat') {
+        mesC.updateMesRank(mysocket, cUser(context));
+      } else {
+        mesC.rankMark('receiver', owner);
+      }
     });
     mysocket.emit('register', newUserModel.user);
     return MultiProvider(
@@ -38,7 +43,7 @@ class MyApp extends StatelessWidget {
         //  用户信息
         ListenableProvider<UserModle>.value(value: newUserModel),
         //  websocket 实例
-        Provider<MySocketIO>.value(value: new MySocketIO(info['socketIO'])),
+        Provider<MySocketIO>.value(value: new MySocketIO(mysocket)),
         //  聊天信息
         ListenableProvider<Message>.value(value: messList)
       ],

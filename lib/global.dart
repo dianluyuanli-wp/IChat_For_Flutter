@@ -6,6 +6,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import './tools/network.dart';
 import 'package:dio/dio.dart';
 import 'dart:math';
+import 'package:provider/provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Profile {
@@ -61,7 +62,6 @@ class Global {
       }
     }
     String socketIODomain = 'http://tangshisanbaishou.xyz';
-    String local = 'http://localhost';
     IO.Socket socket = IO.io(socketIODomain, <String, dynamic>{
       'transports': ['websocket'],
       'path': '/mySocket'
@@ -175,8 +175,18 @@ class SingleMesCollection {
   int user1flag = 0;
   int user2flag = 0;
 
+  //  空白构造函数
   SingleMesCollection();
 
+  //  根据参数构造函数
+  SingleMesCollection.fromMes(String sender, String receiver, String content) {
+    bothOwner = sender.compareTo(receiver) > 0 ? receiver + '@' + sender : sender + '@' + receiver;
+    user1flag = isFirst(bothOwner, sender) ? 1 : 0;
+    user2flag = isFirst(bothOwner, sender) ? 0 : 1;
+    message = [new SingleMessage(sender, content, new DateTime.now().millisecondsSinceEpoch)];
+  }
+
+  //  根据json的构造函数
   SingleMesCollection.fromJson(Map json) {
     bothOwner = json['bothOwner'];
     message = json['message'].map<SingleMessage>((item) {
@@ -186,6 +196,7 @@ class SingleMesCollection {
     user2flag = json['user2_flag'];
   }
 
+  //  根据身份更新消息计数(同步本地)
   void rankMark(String identity, String athor) {
     if (identity == 'sender') {
       if (isFirst(bothOwner, athor)) {
@@ -202,14 +213,22 @@ class SingleMesCollection {
       }
     }
   }
-
+  //  本地计数统一并通知远端同步
   void updateMesRank(IO.Socket mysocket, String user) {
-    mysocket.emit('updateMessRank', [user, bothOwner.replaceAll(user, '').replaceAll('@', 'replace')]);
+    print(user);
+    print(bothOwner.replaceAll(user, '').replaceAll('@', ''));
+    mysocket.emit('updateMessRank', [user, bothOwner.replaceAll(user, '').replaceAll('@', '')]);
     if (isFirst(bothOwner, user)) {
       user1flag = user2flag;
     } else {
       user2flag = user1flag;
     }
+  }
+
+  int flagDiff(owner) {
+    print(user1flag);
+    print(user2flag);
+    return (isFirst(bothOwner, owner) ? -1 : 1) * (user1flag - user2flag);
   }
 }
 
@@ -227,12 +246,38 @@ class Message extends MessageNotifier {
       return SingleMesCollection.fromJson(item);
     }).toList();
   }
-
+  //  获得最后一条信息
   String getLastMessage(String name) {
     return messageArray.firstWhere((item) => (item.bothOwner.contains(name)), orElse: () => new SingleMesCollection()).message.last.content;
   }
-
+  //  获取与某人的聊天记录
   SingleMesCollection getUserMesCollection(String name) {
     return messageArray.firstWhere((item) => item.bothOwner.contains(name), orElse: () => new SingleMesCollection());
+  }
+  //  添加一个新的聊天记录
+  void addItemToMesArray(String sender, String receiver, String content) {
+    messageArray.add(SingleMesCollection.fromMes(sender, receiver, content));
+  }
+}
+
+//  给其他widget做的抽象类，用来获取数据
+abstract class CommonInterface {
+  String cUser(BuildContext context) {
+    return Provider.of<UserModle>(context).user;
+  }
+  String cSayto(BuildContext context) {
+    return Provider.of<UserModle>(context).sayTo;
+  }
+  IO.Socket cMysocket(BuildContext context) {
+    return Provider.of<MySocketIO>(context).mySocket;
+  }
+  SingleMesCollection cTalkingCol(BuildContext context) {
+    return Provider.of<Message>(context).getUserMesCollection(cSayto(context));
+  }
+  UserModle cUsermodal(BuildContext context) {
+    return Provider.of<UserModle>(context);
+  }
+  SingleMesCollection cMesCol(BuildContext context, String owner) {
+    return Provider.of<Message>(context).getUserMesCollection(owner);
   }
 }
