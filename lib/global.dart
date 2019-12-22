@@ -215,8 +215,6 @@ class SingleMesCollection {
   }
   //  本地计数统一并通知远端同步
   void updateMesRank(IO.Socket mysocket, String user) {
-    print(user);
-    print(bothOwner.replaceAll(user, '').replaceAll('@', ''));
     mysocket.emit('updateMessRank', [user, bothOwner.replaceAll(user, '').replaceAll('@', '')]);
     if (isFirst(bothOwner, user)) {
       user1flag = user2flag;
@@ -226,8 +224,6 @@ class SingleMesCollection {
   }
 
   int flagDiff(owner) {
-    print(user1flag);
-    print(user2flag);
     return (isFirst(bothOwner, owner) ? -1 : 1) * (user1flag - user2flag);
   }
 }

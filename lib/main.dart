@@ -21,23 +21,6 @@ class MyApp extends StatelessWidget with CommonInterface {
     UserModle newUserModel = new UserModle();
     Message messList = Message.fromJson(info['messageArray']);
     IO.Socket mysocket = info['socketIO'];
-    mysocket.on('chat message', (msg) {
-      String owner = msg['owner'];
-      String message = msg['message'];
-      Message mesArray = Provider.of<Message>(context);
-      SingleMesCollection mesC = mesArray.getUserMesCollection(owner);
-      if (mesC.bothOwner == null) {
-        mesArray.addItemToMesArray(owner, newUserModel.user, message);
-      } else {
-        mesC.message.add(new SingleMessage(owner, message, new DateTime.now().millisecondsSinceEpoch));
-      }
-      if (ModalRoute.of(context).settings.name == 'chat') {
-        mesC.updateMesRank(mysocket, cUser(context));
-      } else {
-        mesC.rankMark('receiver', owner);
-      }
-    });
-    mysocket.emit('register', newUserModel.user);
     return MultiProvider(
       providers: [
         //  用户信息
@@ -47,7 +30,46 @@ class MyApp extends StatelessWidget with CommonInterface {
         //  聊天信息
         ListenableProvider<Message>.value(value: messList)
       ],
-      child: MaterialApp(
+      child: ListenContainer(),
+    );
+  }
+}
+
+class ListenContainer extends StatelessWidget  with CommonInterface {
+  @override
+  Widget build(BuildContext context) {
+    UserModle newUserModel = cUsermodal(context);
+    Message mesArray = Provider.of<Message>(context);
+    print('container');
+    if(!cMysocket(context).hasListeners('chat message')) {
+      cMysocket(context).on('chat message', (msg) {
+        String owner = msg['owner'];
+        String message = msg['message'];
+        print('1111');
+        SingleMesCollection mesC = mesArray.getUserMesCollection(owner);
+        if (mesC.bothOwner == null) {
+          mesArray.addItemToMesArray(owner, newUserModel.user, message);
+        } else {
+          //cTalkingCol(context).message.add(newMess);
+          cMesCol(context, owner).message.add(new SingleMessage(owner, message, new DateTime.now().millisecondsSinceEpoch));
+          print(mesArray.getLastMessage(owner));
+        }
+        // if (ModalRoute.of(context).settings.name == 'chat') {
+        //   mesC.updateMesRank(cMysocket(context), cUser(context));
+        // } else {
+        //   mesC.rankMark('receiver', owner);
+        // }
+      });
+    }
+    cMysocket(context).emit('register', newUserModel.user);
+    return RouteContainer();
+  }
+}
+
+class RouteContainer extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
           // This is the theme of your application.
@@ -67,8 +89,7 @@ class MyApp extends StatelessWidget with CommonInterface {
           'chat': (context) => Chat(),
           'modify': (context) => Modify(),
         }
-      )
-    );
+      );
   }
 }
 
@@ -77,7 +98,7 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage>{
   int _selectedIndex = 1;
 
   @override

@@ -51,13 +51,11 @@ class _FindFriendState extends State<FindFriend> {
 
   void serchFriend() async {
     String searchContent = _searchController.text;
-    print(Provider.of<UserModle>(context).user);
     if (searchContent == Provider.of<UserModle>(context).user) {
       showToast('不能搜索自己', context);
       return;
     }
     var res;
     res = await Network.get('searchName', {'searchName': searchContent});
-    print(res);
   }
 }
