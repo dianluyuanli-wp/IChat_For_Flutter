@@ -35,7 +35,12 @@ class MyApp extends StatelessWidget with CommonInterface {
   }
 }
 
-class ListenContainer extends StatelessWidget  with CommonInterface {
+class ListenContainer extends StatefulWidget {
+  @override
+  _ListenContainerState createState() => _ListenContainerState();
+}
+
+class _ListenContainerState extends State<ListenContainer>  with CommonInterface {
   @override
   Widget build(BuildContext context) {
     UserModle newUserModel = cUsermodal(context);
@@ -46,6 +51,7 @@ class ListenContainer extends StatelessWidget  with CommonInterface {
         String owner = msg['owner'];
         String message = msg['message'];
         print('1111');
+        print(message);
         SingleMesCollection mesC = mesArray.getUserMesCollection(owner);
         if (mesC.bothOwner == null) {
           mesArray.addItemToMesArray(owner, newUserModel.user, message);
@@ -62,13 +68,6 @@ class ListenContainer extends StatelessWidget  with CommonInterface {
       });
     }
     cMysocket(context).emit('register', newUserModel.user);
-    return RouteContainer();
-  }
-}
-
-class RouteContainer extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(

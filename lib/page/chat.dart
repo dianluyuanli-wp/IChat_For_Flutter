@@ -25,7 +25,7 @@ class _ChatState extends State<Chat> with CommonInterface {
             children: <Widget>[
               // IconButton(
               //   icon: Icon(Icons.find_replace, color: Colors.white),
-              //   onPressed: () => Navigator.pop(context),
+              //   onPressed: flush,
               // ),
               Transform.translate(
                 offset: Offset(-30, 0),
@@ -41,5 +41,11 @@ class _ChatState extends State<Chat> with CommonInterface {
         ],
       ),
     );
+  }
+
+  void flush() {
+    setState(() {
+      
+    });
   }
 }
