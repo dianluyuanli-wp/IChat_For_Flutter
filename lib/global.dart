@@ -151,6 +151,7 @@ class MySocketIO {
 class MessageNotifier extends ChangeNotifier {
   @override
   void notifyListeners() {
+    print('notice');
     super.notifyListeners();
   }
 }
@@ -254,6 +255,11 @@ class Message extends MessageNotifier {
   void addItemToMesArray(String sender, String receiver, String content) {
     messageArray.add(SingleMesCollection.fromMes(sender, receiver, content));
   }
+
+  void addMessRecord(String sayTo, SingleMessage mes) {
+    getUserMesCollection(sayTo).message.add(mes);
+    notifyListeners();
+  }
 }
 
 //  给其他widget做的抽象类，用来获取数据
@@ -275,5 +281,8 @@ abstract class CommonInterface {
   }
   SingleMesCollection cMesCol(BuildContext context, String owner) {
     return Provider.of<Message>(context).getUserMesCollection(owner);
+  }
+  Message cMesArr(BuildContext context) {
+    return Provider.of<Message>(context);
   }
 }
