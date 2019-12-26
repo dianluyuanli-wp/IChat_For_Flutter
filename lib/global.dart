@@ -151,7 +151,6 @@ class MySocketIO {
 class MessageNotifier extends ChangeNotifier {
   @override
   void notifyListeners() {
-    print('notice');
     super.notifyListeners();
   }
 }
@@ -206,7 +205,7 @@ class SingleMesCollection {
         user2flag += 1;
       }
     } else {
-      int updateNum = max(user1flag, user1flag);
+      int updateNum = max(user1flag, user1flag) + 1;
       if (isFirst(bothOwner, athor)) {
         user1flag = updateNum;
       } else {

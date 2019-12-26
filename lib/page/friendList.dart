@@ -18,7 +18,7 @@ class _FriendListState extends State<FriendList> with CommonInterface {
           itemBuilder: (BuildContext context, int index) {
             //return ListTile(title: Text('$index'), onTap: () => {enterTalk(context)});
             Map friendInfo = cUsermodal(context).friendsList[index];
-            int flagDiff = cMesCol(context, iam).flagDiff(iam);
+            int flagDiff = cMesCol(context, friendInfo['userName']).flagDiff(iam);
             return GestureDetector(
               child: Container(
                 constraints: BoxConstraints(
@@ -92,6 +92,7 @@ class _FriendListState extends State<FriendList> with CommonInterface {
   void enterTalk(context, sayTo) {
     cUsermodal(context).sayTo = sayTo;
     cTalkingCol(context).updateMesRank(cMysocket(context), cUser(context));
+    //Navigator.of(context).
     Navigator.pushNamed(context, 'chat');
   }
 }
