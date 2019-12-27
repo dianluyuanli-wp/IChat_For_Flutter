@@ -56,10 +56,13 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
         } else {
           cMesArr(context).addMessRecord(owner, new SingleMessage(owner, message, new DateTime.now().millisecondsSinceEpoch));
         }
+        //  非聊天环境
         if (myK.currentState == null) {
           cMesCol(context, owner).rankMark('receiver', owner);
         } else {
+          //  聊天环境
           cMesCol(context, owner).updateMesRank(cMysocket(context), cUser(context));
+          myK.currentState.slideToEnd();
         }
       });
     }

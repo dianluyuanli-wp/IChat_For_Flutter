@@ -20,9 +20,9 @@ class _TalkLitState extends State<TalkList> with CommonInterface {
   void initState() {
     super.initState();
     widget.scrollController.addListener(() {
-      if (widget.scrollController.position.pixels <= 10) {
-        _getMoreMessage();
-      }
+      // if (widget.scrollController.position.pixels == 10) {
+      //   _getMoreMessage();
+      // }
     });
     //widget.scrollController.jumpTo(widget.scrollController.position.maxScrollExtent);
   }
@@ -67,29 +67,37 @@ class _TalkLitState extends State<TalkList> with CommonInterface {
     return Expanded(
             child: Container(
               color: Color(0xfff5f5f5),
-              child: ListView.builder(
-                itemBuilder: (BuildContext context, int index) {
-                  //  滚动的菊花
-                  if (index == 0) {
-                    return acculateReqLength == 0
-                    ? Center(
-                      child: Text('一一没有更多消息了一一')
-                    )
-                    : Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: new Center(
-                        child: new Opacity(
-                          opacity: isLoading ? 1.0 : 0.0,
-                          child: new CircularProgressIndicator(),
+              child: NotificationListener<OverscrollNotification>(
+                child: ListView.builder(
+                  itemBuilder: (BuildContext context, int index) {
+                    //  滚动的菊花
+                    if (index == 0) {
+                      return acculateReqLength == 0
+                      ? Center(
+                        child: Text('一一没有更多消息了一一')
+                      )
+                      : Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: new Center(
+                          child: new Opacity(
+                            opacity: isLoading ? 1.0 : 0.0,
+                            child: new CircularProgressIndicator(),
+                          ),
                         ),
-                      ),
-                    );
+                      );
+                    }
+                    return MessageContent(mesList: mesCol.message, rank:index);
+                  },
+                  itemCount: mesCol.message.length + 1,
+                  controller: widget.scrollController,
+                ),
+                onNotification: (OverscrollNotification notification) {
+                  if (widget.scrollController.position.pixels <= 10) {
+                    _getMoreMessage();
                   }
-                  return MessageContent(mesList: mesCol.message, rank:index);
+                  return true;
                 },
-                itemCount: mesCol.message.length + 1,
-                controller: widget.scrollController,
-              ),
+              )
             )
           );
   }

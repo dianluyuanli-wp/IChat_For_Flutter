@@ -31,8 +31,8 @@ String getIimeStringForChat(int timeStamp) {
     } else if (timeGap < oneDayMillSec) {
         prefix = 'Yesterday   ';
     } else {
-        int dayGap = (timeGap / oneDayMillSec).floor();
-        prefix = (dayGap < 6 ? dayMap[new DateTime.fromMillisecondsSinceEpoch(currentDateStamp - dayGap * oneDayMillSec).weekday] : getYearMounthDate(timeStamp)) + '   ';
+        double dayGap = timeGap / oneDayMillSec;
+        prefix = (dayGap < 6 ? dayMap[new DateTime.fromMillisecondsSinceEpoch(currentDateStamp - (dayGap * oneDayMillSec).floor()).weekday] : getYearMounthDate(timeStamp)) + '   ';
     }
     return prefix + res;
 }

@@ -45,9 +45,7 @@ class ChatState extends State<Chat> with CommonInterface {
     );
   }
 
-  void flush() {
-    setState(() {
-      
-    });
+  void slideToEnd() {
+    _scrollController.jumpTo(_scrollController.position.maxScrollExtent + 40);
   }
 }

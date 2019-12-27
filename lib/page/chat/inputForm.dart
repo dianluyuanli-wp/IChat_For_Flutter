@@ -55,7 +55,7 @@ class _ChatInputFormState extends State<ChatInputForm> with CommonInterface {
     }
     UserModle myInfo = cUsermodal(context);
     SingleMessage newMess = new SingleMessage(myInfo.user, _messController.text, new DateTime.now().millisecondsSinceEpoch);
-    cTalkingCol(context).message.add(newMess);
+    cMesArr(context).addMessRecord(myInfo.sayTo, newMess);
     cTalkingCol(context).rankMark('sender', cUser(context));
     cMysocket(context).emit('chat message', [myInfo.sayTo, myInfo.user, _messController.text]);
     // 保证在组件build的第一帧时才去触发取消清空内容
@@ -63,8 +63,8 @@ class _ChatInputFormState extends State<ChatInputForm> with CommonInterface {
         _messController.clear();
     });
     //  键盘自动收起
-    FocusScope.of(context).requestFocus(FocusNode());
-    widget.scrollController.jumpTo(widget.scrollController.position.maxScrollExtent);
+    //FocusScope.of(context).requestFocus(FocusNode());
+    widget.scrollController.jumpTo(widget.scrollController.position.maxScrollExtent + 50);
     setState(() {
       canSend = false;
     });
