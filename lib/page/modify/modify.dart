@@ -12,7 +12,7 @@ class Modify extends StatefulWidget {
   _ModifyState createState() => new _ModifyState();
 }
 
-class _ModifyState extends State<Modify> {
+class _ModifyState extends State<Modify> with CommonInterface{
   bool canSave = false;
   Map newContent = {
     'nickName': '',
@@ -39,6 +39,23 @@ class _ModifyState extends State<Modify> {
     newContent[key] = value;
   }
 
+  Map updateOjb(String key) {
+    if (key == 'nickName' && infoOwner != cUser(context)) {
+      return {
+        'userName': cUser(context),
+        'changeObj': { 'fridendNickName':{
+          'newNickName': newContent[key],
+          'friend': infoOwner
+        }}
+      };
+    } else {
+      return {
+        'userName': Provider.of<UserModle>(context).user,
+        'changeObj': { key: newContent[key]}
+      };
+    }
+  }
+
   void updateInfo(String key ) async {
     if (!canSave) {
       return ;
@@ -54,13 +71,13 @@ class _ModifyState extends State<Modify> {
       }
     }
     var res;
-    Map reqObj = {
-      'userName': Provider.of<UserModle>(context).user,
-      'changeObj': { key: newContent[key]}
-    };
-    res = await Network.post('updateUserInfo', reqObj);
+    res = await Network.post('updateUserInfo', updateOjb(key));
     if (key == 'nickName') {
-      Provider.of<UserModle>(context).nickName = newContent[key];
+      if (infoOwner == cUser(context)) {
+        Provider.of<UserModle>(context).nickName = newContent[key];
+      } else {
+        cUsermodal(context).friendsListJson.firstWhere((item) => item['userName'] == infoOwner)['nickName'] = newContent[key];
+      }
     }
     if (key == 'avatar') {
       Provider.of<UserModle>(context).avatar = res.data['data']['imgUrl'];
@@ -70,11 +87,16 @@ class _ModifyState extends State<Modify> {
     }
   }
 
+  get infoOwner {
+    Map temp =  ModalRoute.of(context).settings.arguments;
+    return temp['owner'];
+  }
+
   @override
   Widget build(BuildContext context) {
     final Map arg = ModalRoute.of(context).settings.arguments;
     final Map modifyWidgtMap = {
-      'nickName': NickName(handler: _changeSaveStatus, modifyFunc: modifyContent),
+      'nickName': NickName(handler: _changeSaveStatus, modifyFunc: modifyContent, target: arg['owner']),
       'passWord': Password(handler: _changeSaveStatus, modifyFunc: modifyContent),
       'avatar': Avatar(handler: _changeSaveStatus, modifyFunc: modifyContent)
     };

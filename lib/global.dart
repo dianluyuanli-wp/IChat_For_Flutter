@@ -85,6 +85,18 @@ class ProfileChangeNotifier extends ChangeNotifier {
   }
 }
 
+class FriendInfo {
+  String user;
+  String nickName;
+  String avatar;
+
+  FriendInfo.fromJson(Map json) {
+    user = json['userName'];
+    nickName = json['nickName'];
+    avatar = json['avatar'];
+  }
+}
+
 class UserModle extends ProfileChangeNotifier {
   String get user => _profile.user;
   set user(String user) {
@@ -110,8 +122,14 @@ class UserModle extends ProfileChangeNotifier {
     notifyListeners();
   }
 
-  List get friendsList => _profile.friendsList;
+  List<FriendInfo> get friendsList => _profile.friendsList.map<FriendInfo>((item) => FriendInfo.fromJson(item)).toList();
   set friendsList(List value) {
+    _profile.friendsList = value;
+    notifyListeners();
+  }
+
+  List get friendsListJson => _profile.friendsList;
+  set friendsListJson(List value) {
     _profile.friendsList = value;
     notifyListeners();
   }
@@ -138,8 +156,8 @@ class UserModle extends ProfileChangeNotifier {
     notifyListeners();
   }
 
-  Map findFriendInfo(name) {
-    return friendsList.firstWhere((item) => name == item['userName']);
+  FriendInfo findFriendInfo(name) {
+    return friendsList.firstWhere((item) => name == item.user);
   }
 }
 
@@ -283,5 +301,8 @@ abstract class CommonInterface {
   }
   Message cMesArr(BuildContext context) {
     return Provider.of<Message>(context);
+  }
+  FriendInfo cFriendInfo(BuildContext context, String name) {
+    return cUsermodal(context).friendsList.firstWhere((item) => item.user == name);
   }
 }

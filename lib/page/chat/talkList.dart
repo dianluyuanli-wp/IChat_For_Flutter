@@ -136,7 +136,7 @@ class MessageContent extends StatelessWidget with CommonInterface {
               Container(
                 margin: EdgeInsets.all(5),
                 child: Image(
-                    image: CachedNetworkImageProvider(showOnLeft ? userModel.findFriendInfo(info.owner)['avatar'] : image),
+                    image: CachedNetworkImageProvider(showOnLeft ? userModel.findFriendInfo(info.owner).avatar : image),
                     height: 30,
                     width: 30,
                     fit: BoxFit.fill

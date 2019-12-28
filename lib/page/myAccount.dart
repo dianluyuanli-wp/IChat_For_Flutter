@@ -8,9 +8,10 @@ class MyAccount extends StatefulWidget {
   _MyAccountState createState() => _MyAccountState();
 }
 
-class _MyAccountState extends State<MyAccount> {
+class _MyAccountState extends State<MyAccount> with CommonInterface{
   @override
   Widget build(BuildContext context) {
+    String me = cUser(context);
     return SingleChildScrollView(
       child: Container(
         constraints: BoxConstraints(minWidth: double.infinity),
@@ -22,16 +23,16 @@ class _MyAccountState extends State<MyAccount> {
           mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             Container(
-              child: PersonInfoBar(infoMap: Provider.of<UserModle>(context).modelJson),
+              child: PersonInfoBar(infoMap: cUsermodal(context)),
               margin: EdgeInsets.only(top: 15),
             ),
             Container(
               margin: EdgeInsets.only(top: 15),
               child: Column(
                 children: <Widget>[
-                  ModifyItem(text: 'Nickname', keyName: 'nickName'),
-                  ModifyItem(text: 'Avatar', keyName: 'avatar'),
-                  ModifyItem(text: 'Password', keyName: 'passWord', useBottomBorder: true)
+                  ModifyItem(text: 'Nickname', keyName: 'nickName', owner: me),
+                  ModifyItem(text: 'Avatar', keyName: 'avatar', owner: me),
+                  ModifyItem(text: 'Password', keyName: 'passWord', owner: me, useBottomBorder: true)
                 ],
               ),
             ),
@@ -67,9 +68,10 @@ class _MyAccountState extends State<MyAccount> {
 var borderStyle = BorderSide(color: Color(0xffd4d4d4), width: 1.0);
 
 class ModifyItem extends StatelessWidget {
-  ModifyItem({this.text, this.keyName, this.useBottomBorder = false});
+  ModifyItem({this.text, this.keyName, this.owner, this.useBottomBorder = false, });
   final String text;
   final String keyName;
+  final String owner;
   final bool useBottomBorder;
 
   @override
@@ -90,11 +92,11 @@ class ModifyItem extends StatelessWidget {
         padding: EdgeInsets.only(left: 10),
         child: Text(text),
       ),
-      onTap: () => modify(context, text, keyName),
+      onTap: () => modify(context, text, keyName, owner),
     );
   }
 }
 
-void modify(BuildContext context, String text, String keyName) {
-  Navigator.pushNamed(context, 'modify', arguments: {'text': text, 'keyName': keyName});
+void modify(BuildContext context, String text, String keyName, String owner) {
+  Navigator.pushNamed(context, 'modify', arguments: {'text': text, 'keyName': keyName, 'owner': owner });
 }

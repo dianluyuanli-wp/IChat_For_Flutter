@@ -17,8 +17,8 @@ class _FriendListState extends State<FriendList> with CommonInterface {
           itemCount: Provider.of<UserModle>(context).friendsList.length,
           itemBuilder: (BuildContext context, int index) {
             //return ListTile(title: Text('$index'), onTap: () => {enterTalk(context)});
-            Map friendInfo = cUsermodal(context).friendsList[index];
-            int flagDiff = cMesCol(context, friendInfo['userName']).flagDiff(iam);
+            FriendInfo friendInfo = cUsermodal(context).friendsList[index];
+            int flagDiff = cMesCol(context, friendInfo.user).flagDiff(iam);
             return GestureDetector(
               child: Container(
                 constraints: BoxConstraints(
@@ -37,7 +37,7 @@ class _FriendListState extends State<FriendList> with CommonInterface {
                           constraints: BoxConstraints(maxWidth: 40, maxHeight: 40),
                           margin: EdgeInsets.symmetric(horizontal: 5),
                           child: Image(
-                            image: CachedNetworkImageProvider(friendInfo['avatar']),
+                            image: CachedNetworkImageProvider(friendInfo.avatar),
                             width: 40,
                           ),
                         ),
@@ -71,15 +71,15 @@ class _FriendListState extends State<FriendList> with CommonInterface {
                       children: <Widget>[
                         Container(
                           margin: EdgeInsets.fromLTRB(0, 7, 0, 7),
-                          child: Text(friendInfo['nickName']),
+                          child: Text(friendInfo.nickName),
                         ),
-                        Text(Provider.of<Message>(context).getLastMessage(friendInfo['userName']))
+                        Text(Provider.of<Message>(context).getLastMessage(friendInfo.user))
                       ],
                     )
                   ],
                 ),
               ),
-              onTap: () => {enterTalk(context, friendInfo['userName'])}
+              onTap: () => {enterTalk(context, friendInfo.user)}
             );
           },
           separatorBuilder: (BuildContext contet, int index) {

@@ -6,7 +6,7 @@ class PersonInfoBar extends StatelessWidget {
     @required this.infoMap
   });
 
-  final Map infoMap;
+  final infoMap;
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -19,7 +19,7 @@ class PersonInfoBar extends StatelessWidget {
             height: 70,
             padding: EdgeInsetsDirectional.fromSTEB(10, 10, 10, 10),
             child: Image(
-              image: CachedNetworkImageProvider(infoMap['avatar']),
+              image: CachedNetworkImageProvider(infoMap.avatar),
               height: 50,
               width: 50,
               fit: BoxFit.fill
@@ -30,9 +30,9 @@ class PersonInfoBar extends StatelessWidget {
             children: <Widget>[
               Container(
                 margin: EdgeInsetsDirectional.only(bottom: 8),
-                child: Text(infoMap['nickName'] ?? 'dddd'),
+                child: Text(infoMap.nickName ?? 'dddd'),
               ),
-              Text('chatId: ' + infoMap['user'])
+              Text('chatId: ' + infoMap.user)
             ],
           )
         ],

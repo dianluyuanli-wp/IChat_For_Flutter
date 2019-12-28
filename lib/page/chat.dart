@@ -25,14 +25,17 @@ class ChatState extends State<Chat> with CommonInterface {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              // IconButton(
-              //   icon: Icon(Icons.find_replace, color: Colors.white),
-              //   onPressed: flush,
-              // ),
               Transform.translate(
-                offset: Offset(-30, 0),
-                child: Text(sayTo),
+                offset: Offset(-10, 0),
+                child: Text(cFriendInfo(context, sayTo).nickName),
               ),
+              Transform.translate(
+                offset: Offset(110, 0),
+                child: IconButton(
+                  icon: Icon(Icons.attach_file, color: Colors.white),
+                  onPressed: toFriendInfo,
+                ),
+              )
             ],
           ),
         ),
@@ -43,6 +46,13 @@ class ChatState extends State<Chat> with CommonInterface {
         ],
       ),
     );
+  }
+
+  void toFriendInfo() {
+    // cUsermodal(context).sayTo = sayTo;
+    // cTalkingCol(context).updateMesRank(cMysocket(context), cUser(context));
+    //Navigator.of(context).
+    Navigator.pushNamed(context, 'friendInfo');
   }
 
   void slideToEnd() {

@@ -3,10 +3,11 @@ import 'package:provider/provider.dart';
 import '../../global.dart';
 
 class NickName extends StatefulWidget {
-  NickName({Key key, @required this.handler, @required this.modifyFunc}) 
+  NickName({Key key, @required this.handler, @required this.modifyFunc, @required this.target}) 
     : super(key: key);
   final ValueChanged<bool> handler;
   final modifyFunc;
+  final String target;
   //final void ValueChanged<String, String> modifyFunc;
   //var modifyFunc;
 
@@ -14,14 +15,14 @@ class NickName extends StatefulWidget {
   _NickNameState createState() => _NickNameState();
 }
 
-class _NickNameState extends State<NickName> {
+class _NickNameState extends State<NickName> with CommonInterface{
   TextEditingController _nickNameController = new TextEditingController();
   GlobalKey _formKey = new GlobalKey<FormState>();
   bool _nameAutoFocus = true;
 
   @override
   Widget build(BuildContext context) {
-    String oldNickname = Provider.of<UserModle>(context).nickName;
+    String oldNickname = widget.target == cUser(context) ? cUsermodal(context).nickName : cFriendInfo(context, widget.target).nickName;
     return Padding(
       padding: const EdgeInsets.all(16),
       child: Form(
@@ -34,7 +35,7 @@ class _NickNameState extends State<NickName> {
               controller: _nickNameController,
               decoration: InputDecoration(
                 labelText: 'NickName',
-                hintText: 'Enter your new nickname',
+                hintText: 'Enter new nickname',
                 prefixIcon: Icon(Icons.notification_important)
               ),
               validator: (v) {

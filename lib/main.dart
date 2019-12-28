@@ -7,6 +7,7 @@ import 'page/findFriend.dart';
 import 'page/modify/modify.dart';
 import 'page/friendList.dart';
 import 'page/chat.dart';
+import './page/friendInfo.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() => Global.init().then((e) => runApp(MyApp(info: e)));
@@ -86,6 +87,7 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
           '/': (context) => Provider.of<UserModle>(context).isLogin ? MyHomePage() : LogIn(),
           'chat': (context) => Chat(key: myK),
           'modify': (context) => Modify(),
+          'friendInfo': (context) => FriendInfoRoute()
         }
       );
   }
