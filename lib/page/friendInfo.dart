@@ -82,7 +82,35 @@ class _FriendInfoState extends State<FriendInfoRoute> with CommonInterface{
     );
   }
 
-  void deleteFriend() {
+  void deleteFriend() async {
+    bool delete = await deleteDialog();
+    if (delete == null) {
+      print('取消');
+    } else {
+      print('确认');
+    }
+  }
 
+  Future<bool> deleteDialog() {
+    return showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Text('提示'),
+          content: Text('您确定要删除该好友吗?'),
+          actions: <Widget>[
+            FlatButton(
+              child: Text('取消'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+            FlatButton(
+              child: Text('删除'),
+              onPressed: () => Navigator.of(context).pop(true),
+            )
+          ],
+        );
+      }
+    );
   }
 }
+

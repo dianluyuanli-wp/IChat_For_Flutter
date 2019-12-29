@@ -110,15 +110,15 @@ class UserModle extends ProfileChangeNotifier {
     notifyListeners();
   }
 
-  List get friendRequest => _profile.friendRequest;
-  set friendRequest(List value) {
-    _profile.friendRequest = value;
-    notifyListeners();
-  }
-
   String get avatar => _profile.avatar;
   set avatar(String value) {
     _profile.avatar = value;
+    notifyListeners();
+  }
+
+  List get friendRequest => _profile.friendRequest;
+  set friendRequest(List value) {
+    _profile.friendRequest = value;
     notifyListeners();
   }
 
