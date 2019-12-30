@@ -84,10 +84,17 @@ class _FriendInfoState extends State<FriendInfoRoute> with CommonInterface{
 
   void deleteFriend() async {
     bool delete = await deleteDialog();
-    if (delete == null) {
-      print('取消');
-    } else {
-      print('确认');
+    if (delete != null) {
+      String friendName = cUsermodal(context).sayTo;
+      await Network.post('updateUserInfo', {
+        'userName': cUser(context),
+        'changeObj': { 'delete': {
+          'key': 'friendsList',
+          'value': friendName
+        }}
+      });
+      cUsermodal(context).friendsListJson.removeWhere((item) => item['userName'] == friendName);
+      Navigator.pushNamed(context, '/');
     }
   }
 

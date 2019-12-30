@@ -52,7 +52,7 @@ class _FindFriendState extends State<FindFriend> {
           resultList.length > 0 ? Expanded(
             child: ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return PersonInfoBar(infoMap: resultList[index]);
+                return PersonInfoBar(infoMap: resultList[index], useButton: true,);
               },
               itemCount: resultList.length,
             )
