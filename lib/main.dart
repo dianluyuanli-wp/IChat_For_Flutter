@@ -8,6 +8,7 @@ import 'page/modify/modify.dart';
 import 'page/friendList.dart';
 import 'page/chat.dart';
 import './page/friendInfo.dart';
+import 'tools/utils.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() => Global.init().then((e) => runApp(MyApp(info: e)));
@@ -69,7 +70,11 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
     }
     if(!cMysocket(context).hasListeners('system notification')) {
       cMysocket(context).on('system notification', (msg) {
-
+        String type = msg['type'];
+        Map message = msg['message'];
+        Map notificationMap = {
+          'NOT_YOUR_FRIEND': () { showToast('对方开启好友验证，本消息无法送达', context); }
+        };
       });
     }
     cMysocket(context).emit('register', newUserModel.user);
