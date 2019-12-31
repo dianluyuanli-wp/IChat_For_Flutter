@@ -16,7 +16,9 @@ Map apiMap = {
   //  查询更多记录
   'getMoreMessage': 'getMoreMessage',
   //  添加好友
-  'addFriend': 'addFriend'
+  'addFriend': 'addFriend',
+  //  同意好友申请
+  'agreeFriendReq': 'agreeFriendReq'
 };
 
 String domain = 'http://tangshisanbaishou.xyz/api/';

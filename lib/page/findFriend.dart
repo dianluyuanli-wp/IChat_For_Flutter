@@ -10,13 +10,14 @@ class FindFriend extends StatefulWidget {
   _FindFriendState createState() => _FindFriendState();
 }
 
-class _FindFriendState extends State<FindFriend> {
+class _FindFriendState extends State<FindFriend> with CommonInterface {
   TextEditingController _searchController = new TextEditingController();
   GlobalKey _formKey = new GlobalKey<FormState>();
   List<FriendInfo> resultList = [];
 
   @override
   Widget build(BuildContext context) {
+    List<FriendInfo> friendReqList = cUsermodal(context).friendRequest.map<FriendInfo>((item) => FriendInfo.fromJson(item)).toList();
     return Container(
       color: Color(0xfff0eff5),
       child: Column(
@@ -52,11 +53,19 @@ class _FindFriendState extends State<FindFriend> {
           resultList.length > 0 ? Expanded(
             child: ListView.builder(
               itemBuilder: (BuildContext context, int index) {
-                return PersonInfoBar(infoMap: resultList[index], useButton: true,);
+                return PersonInfoBar(infoMap: resultList[index], useButton: true, type: 'search',);
               },
               itemCount: resultList.length,
             )
-          ) : null
+          ) : null,
+          friendReqList.length > 0 ? Expanded(
+            child: ListView.builder(
+              itemBuilder: (BuildContext context, int index) {
+                return PersonInfoBar(infoMap: friendReqList[index], useButton: true, type: 'friendReq');
+              },
+              itemCount: friendReqList.length,
+            ),
+          ) : null,
         ].where((item) => item != null).toList(),
       )
     );

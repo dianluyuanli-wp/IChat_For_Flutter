@@ -67,6 +67,11 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
         }
       });
     }
+    if(!cMysocket(context).hasListeners('system notification')) {
+      cMysocket(context).on('system notification', (msg) {
+
+      });
+    }
     cMysocket(context).emit('register', newUserModel.user);
     return MaterialApp(
         title: 'Flutter Demo',

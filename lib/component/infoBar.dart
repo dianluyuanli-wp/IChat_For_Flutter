@@ -7,11 +7,13 @@ import '../tools/utils.dart';
 class PersonInfoBar extends StatelessWidget {
   PersonInfoBar({
     @required this.infoMap,
-    this.useButton = false
+    this.useButton = false,
+    this.type
   });
 
   final infoMap;
   final bool useButton;
+  final String type;
   @override
   Widget build(BuildContext context) {
     print(useButton);
@@ -41,7 +43,7 @@ class PersonInfoBar extends StatelessWidget {
               Text('chatId: ' + infoMap.user)
             ],
           ),
-          useButton ? ButtonGroup(type: 'search', target: infoMap.user) : null
+          useButton ? ButtonGroup(type: type, target: infoMap.user, infoObj: infoMap) : null
           //ButtonGroup(type: 'search', target: infoMap.user)
         ].where((item) => item != null).toList(),
       ),
@@ -50,10 +52,11 @@ class PersonInfoBar extends StatelessWidget {
 }
 
 class ButtonGroup extends StatefulWidget {
-  ButtonGroup({Key key, @required this.type, @required this.target })
+  ButtonGroup({Key key, @required this.type, @required this.target, this.infoObj })
   : super(key: key);
   final String type;
   final String target;
+  final FriendInfo infoObj;
   @override
   _ButtonGroupState createState() => _ButtonGroupState();
 }
@@ -89,9 +92,25 @@ class _ButtonGroupState extends State<ButtonGroup> with CommonInterface {
               )
               : Row(
                 children: <Widget>[
-                  FlatButton(
-                    child: Text('Added'),
-                    onPressed: () {},
+                  Container(
+                    margin: EdgeInsets.only(left: 30),
+                    height: 30,
+                    width: 80,
+                    child: FlatButton(
+                      color: Colors.blue,
+                      child: Text('Accept', style: TextStyle(color: Color(0xffffffff))),
+                      onPressed: accept,
+                    ),
+                  ),
+                  Container(
+                    height: 30,
+                    width: 80,
+                    margin: EdgeInsets.only(left: 10),
+                    child: FlatButton(
+                      color: Colors.red,
+                      child: Text('Ignore', style: TextStyle(color: Color(0xffffffff))),
+                      onPressed: ignore,
+                    ),
                   )
                 ],
               ),
@@ -103,9 +122,35 @@ class _ButtonGroupState extends State<ButtonGroup> with CommonInterface {
     var res = await Network.get('addFriend', {'userName': cUser(context), 'friendName': widget.target});
     if (res.data == 'friend request success!') {
       showToast('请求发送成功', context);
-      cMysocket(context).emit('informFriend', { 'type': 'addReq', 'friendName': widget.target, 'IAm': cUser(context)});
+      cMysocket(context).emit('informFriend', { 'type': 'agreeReq', 'friendName': widget.target, 'IAm': cUser(context)});
     } else if (res.data == 'A friend request has been sent') {
       showToast('好友请求已发送，请勿重复发送', context);
     }
+  }
+
+  void accept() async {
+      var res = await Network.get('agreeFriendReq', {'userName': cUser(context), 'friendName': widget.target});
+      if (res.data == 'have a new friend!') {
+        showToast('已添加好友', context);
+        cMysocket(context).emit('informFriend', { 'type': 'addReq', 'friendName': widget.target, 'IAm': cUser(context)});
+        if (cUsermodal(context).friendsList.firstWhere((item) => item.user == widget.target, orElse: () => null) == null) {
+          FriendInfo targetInfo = widget.infoObj;
+          cUsermodal(context).friendsListJson.insert(0, { 'nserName': targetInfo.user, 'nickName': targetInfo.nickName, 'avatar': targetInfo.avatar });
+        }
+        cUsermodal(context).friendRequest = cUsermodal(context).friendRequest.where((item) => item['userName'] != widget.target);
+      }
+  }
+
+  void ignore() async {
+    var res = await Network.get('updateUserInfo', {
+      'userName': cUser(context), 
+      'changeObj': { 
+        'delete': { 
+          'value': widget.target, 
+          'key': 'friendRequest'
+          }
+        }
+      });
+    cUsermodal(context).friendRequest = cUsermodal(context).friendRequest.where((item) => item['userName'] != widget.target);
   }
 }
