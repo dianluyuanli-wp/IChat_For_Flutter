@@ -9,6 +9,7 @@ import 'page/friendList.dart';
 import 'page/chat.dart';
 import './page/friendInfo.dart';
 import 'tools/utils.dart';
+import 'dart:convert';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() => Global.init().then((e) => runApp(MyApp(info: e)));
@@ -46,38 +47,7 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
   final GlobalKey<ChatState> myK = GlobalKey<ChatState>();
   @override
   Widget build(BuildContext context) {
-    UserModle newUserModel = cUsermodal(context);
-    Message mesArray = Provider.of<Message>(context);
-    if(!cMysocket(context).hasListeners('chat message')) {
-      cMysocket(context).on('chat message', (msg) {
-        String owner = msg['owner'];
-        String message = msg['message'];
-        SingleMesCollection mesC = mesArray.getUserMesCollection(owner);
-        if (mesC.bothOwner == null) {
-          mesArray.addItemToMesArray(owner, newUserModel.user, message);
-        } else {
-          cMesArr(context).addMessRecord(owner, new SingleMessage(owner, message, new DateTime.now().millisecondsSinceEpoch));
-        }
-        //  非聊天环境
-        if (myK.currentState == null) {
-          cMesCol(context, owner).rankMark('receiver', owner);
-        } else {
-          //  聊天环境
-          cMesCol(context, owner).updateMesRank(cMysocket(context), cUser(context));
-          myK.currentState.slideToEnd();
-        }
-      });
-    }
-    if(!cMysocket(context).hasListeners('system notification')) {
-      cMysocket(context).on('system notification', (msg) {
-        String type = msg['type'];
-        Map message = msg['message'];
-        Map notificationMap = {
-          'NOT_YOUR_FRIEND': () { showToast('对方开启好友验证，本消息无法送达', context); }
-        };
-      });
-    }
-    cMysocket(context).emit('register', newUserModel.user);
+    registerNotification(context);
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
@@ -100,6 +70,53 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
           'friendInfo': (context) => FriendInfoRoute()
         }
       );
+  }
+
+  void registerNotification(cContext) {
+    UserModle newUserModel = cUsermodal(context);
+    Message mesArray = Provider.of<Message>(context);
+    //  聊天信息
+    if(!cMysocket(context).hasListeners('chat message')) {
+      cMysocket(context).on('chat message', (msg) {
+        String owner = msg['owner'];
+        String message = msg['message'];
+        SingleMesCollection mesC = mesArray.getUserMesCollection(owner);
+        if (mesC.bothOwner == null) {
+          mesArray.addItemToMesArray(owner, newUserModel.user, message);
+        } else {
+          cMesArr(context).addMessRecord(owner, new SingleMessage(owner, message, new DateTime.now().millisecondsSinceEpoch));
+        }
+        //  非聊天环境
+        if (myK.currentState == null) {
+          cMesCol(context, owner).rankMark('receiver', owner);
+        } else {
+          //  聊天环境
+          cMesCol(context, owner).updateMesRank(cMysocket(context), cUser(context));
+          myK.currentState.slideToEnd();
+        }
+      });
+    }
+    //  系统通知
+    if(!cMysocket(context).hasListeners('system notification')) {
+      cMysocket(context).on('system notification', (msg) {
+        print(msg['message']);
+        String type = msg['type'];
+        Map message = msg['message'] == 'msg' ? {} : msg['message'];
+        Map notificationMap = {
+          'NOT_YOUR_FRIEND': () { showToast('对方开启好友验证，本消息无法送达', cContext); },
+          'NEW_FRIEND_REQ': () {
+            cUsermodal(context).friendRequest.add(message);
+          },
+          'REQ_AGREE': () {
+            if (cUsermodal(context).friendsList.firstWhere((item) => item.user == message['userName'], orElse: () => null) == null) {
+              cUsermodal(context).friendsListJson.insert(0, { 'nserName': message['userName'], 'nickName': message['nickName'], 'avatar': message['avatar'] });
+            }
+          }
+        };
+        notificationMap[type]();
+      });
+    }
+    cMysocket(context).emit('register', newUserModel.user);
   }
 }
 
