@@ -47,7 +47,6 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
   final GlobalKey<ChatState> myK = GlobalKey<ChatState>();
   @override
   Widget build(BuildContext context) {
-    registerNotification(context);
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
@@ -64,17 +63,55 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => Provider.of<UserModle>(context).isLogin ? MyHomePage() : LogIn(),
+          '/': (context) => Provider.of<UserModle>(context).isLogin ? MyHomePage(key: myK) : LogIn(),
           'chat': (context) => Chat(key: myK),
           'modify': (context) => Modify(),
           'friendInfo': (context) => FriendInfoRoute()
         }
       );
   }
+}
 
-  void registerNotification(cContext) {
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key})
+  : super(key: key);
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> with CommonInterface{
+  int _selectedIndex = 1;
+
+  @override
+  Widget build(BuildContext context) {
+    registerNotification(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: TitleContent(index: _selectedIndex),
+      ),
+      body: MiddleContent(index: _selectedIndex),
+      bottomNavigationBar: BottomNavigationBar(
+        items: <BottomNavigationBarItem>[
+          BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text('Friends')),
+          BottomNavigationBarItem(icon: Icon(Icons.find_in_page), title: Text('Contacts')),
+          BottomNavigationBarItem(icon: Icon(Icons.my_location), title: Text('Me')),
+        ],
+        currentIndex: _selectedIndex,
+        fixedColor: Colors.green,
+        onTap: _onItemTapped,
+      ),
+    );
+  }
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index; 
+    });
+  }
+
+    void registerNotification(cContext) async {
     UserModle newUserModel = cUsermodal(context);
     Message mesArray = Provider.of<Message>(context);
+    //showToast('对方开启好友验证，本消息无法送达', context);
     //  聊天信息
     if(!cMysocket(context).hasListeners('chat message')) {
       cMysocket(context).on('chat message', (msg) {
@@ -117,40 +154,6 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
       });
     }
     cMysocket(context).emit('register', newUserModel.user);
-  }
-}
-
-class MyHomePage extends StatefulWidget {
-  @override
-  _MyHomePageState createState() => _MyHomePageState();
-}
-
-class _MyHomePageState extends State<MyHomePage> with CommonInterface{
-  int _selectedIndex = 1;
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: TitleContent(index: _selectedIndex),
-      ),
-      body: MiddleContent(index: _selectedIndex),
-      bottomNavigationBar: BottomNavigationBar(
-        items: <BottomNavigationBarItem>[
-          BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text('Friends')),
-          BottomNavigationBarItem(icon: Icon(Icons.find_in_page), title: Text('Contacts')),
-          BottomNavigationBarItem(icon: Icon(Icons.my_location), title: Text('Me')),
-        ],
-        currentIndex: _selectedIndex,
-        fixedColor: Colors.green,
-        onTap: _onItemTapped,
-      ),
-    );
-  }
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index; 
-    });
   }
 }
 
