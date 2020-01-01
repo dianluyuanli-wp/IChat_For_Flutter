@@ -63,7 +63,7 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => Provider.of<UserModle>(context).isLogin ? MyHomePage(key: myK) : LogIn(),
+          '/': (context) => Provider.of<UserModle>(context).isLogin ? MyHomePage(myK: myK) : LogIn(),
           'chat': (context) => Chat(key: myK),
           'modify': (context) => Modify(),
           'friendInfo': (context) => FriendInfoRoute()
@@ -73,8 +73,10 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key})
+  MyHomePage({Key key, this.myK})
   : super(key: key);
+
+  final GlobalKey<ChatState> myK;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -108,7 +110,7 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
     });
   }
 
-    void registerNotification(cContext) async {
+  void registerNotification(cContext) async {
     UserModle newUserModel = cUsermodal(context);
     Message mesArray = Provider.of<Message>(context);
     //showToast('对方开启好友验证，本消息无法送达', context);
@@ -124,12 +126,12 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
           cMesArr(context).addMessRecord(owner, new SingleMessage(owner, message, new DateTime.now().millisecondsSinceEpoch));
         }
         //  非聊天环境
-        if (myK.currentState == null) {
+        if (widget.myK.currentState == null) {
           cMesCol(context, owner).rankMark('receiver', owner);
         } else {
           //  聊天环境
           cMesCol(context, owner).updateMesRank(cMysocket(context), cUser(context));
-          myK.currentState.slideToEnd();
+          widget.myK.currentState.slideToEnd();
         }
       });
     }
