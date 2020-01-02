@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../global.dart';
 import '../component/infoBar.dart';
-import '../tools/utils.dart';
 import '../tools/network.dart';
 import 'myAccount.dart';
 

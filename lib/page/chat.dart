@@ -30,7 +30,7 @@ class ChatState extends State<Chat> with CommonInterface {
                 child: Text(cFriendInfo(context, sayTo).nickName),
               ),
               Transform.translate(
-                offset: Offset(110, 0),
+                offset: Offset(80, 0),
                 child: IconButton(
                   icon: Icon(Icons.attach_file, color: Colors.white),
                   onPressed: toFriendInfo,

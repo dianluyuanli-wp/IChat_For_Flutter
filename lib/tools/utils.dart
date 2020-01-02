@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
-//import 'package:toast/toast.dart';
-import 'toast.dart';
+import 'package:toast/toast.dart';
+//import 'toast.dart';
 
 void showToast(String value, BuildContext context) {
-    Toast.toast(context, msg:value, position: ToastPostion.top);
+  Toast.show(value, context, duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
 }
 
 bool isFirst(String bothOwner, String user) {

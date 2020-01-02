@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import '../../global.dart';
-import '../../tools/utils.dart';
 
 class ChatInputForm extends StatefulWidget {
   ChatInputForm({Key key, @required this.scrollController})
@@ -69,6 +68,5 @@ class _ChatInputFormState extends State<ChatInputForm> with CommonInterface {
     setState(() {
       canSend = false;
     });
-    //showToast('对方开启好友验证，本消息无法送达', context);
   }
 }

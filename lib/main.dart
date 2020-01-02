@@ -9,7 +9,6 @@ import 'page/friendList.dart';
 import 'page/chat.dart';
 import './page/friendInfo.dart';
 import 'tools/utils.dart';
-import 'dart:convert';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() => Global.init().then((e) => runApp(MyApp(info: e)));
@@ -47,6 +46,7 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
   final GlobalKey<ChatState> myK = GlobalKey<ChatState>();
   @override
   Widget build(BuildContext context) {
+    cMysocket(context).emit('register', cUser(context));
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
 
   @override
   Widget build(BuildContext context) {
-    registerNotification(context);
+    registerNotification();
     return Scaffold(
       appBar: AppBar(
         title: TitleContent(index: _selectedIndex),
@@ -110,10 +110,9 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
     });
   }
 
-  void registerNotification(cContext) async {
+  void registerNotification() {
     UserModle newUserModel = cUsermodal(context);
     Message mesArray = Provider.of<Message>(context);
-    //showToast('对方开启好友验证，本消息无法送达', context);
     //  聊天信息
     if(!cMysocket(context).hasListeners('chat message')) {
       cMysocket(context).on('chat message', (msg) {
@@ -142,7 +141,7 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
         String type = msg['type'];
         Map message = msg['message'] == 'msg' ? {} : msg['message'];
         Map notificationMap = {
-          'NOT_YOUR_FRIEND': () { showToast('对方开启好友验证，本消息无法送达', cContext); },
+          'NOT_YOUR_FRIEND': () { showToast('对方开启好友验证，本消息无法送达', context); },
           'NEW_FRIEND_REQ': () {
             cUsermodal(context).friendRequest.add(message);
           },
@@ -155,7 +154,6 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
         notificationMap[type]();
       });
     }
-    cMysocket(context).emit('register', newUserModel.user);
   }
 }
 

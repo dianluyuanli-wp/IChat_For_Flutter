@@ -64,7 +64,10 @@ class ButtonGroup extends StatefulWidget {
 class _ButtonGroupState extends State<ButtonGroup> with CommonInterface {
   @override
   Widget build(BuildContext context) {
-    bool inFriendsList = cUsermodal(context).friendsList.firstWhere((item) => item.user == widget.target, orElse: () => new FriendInfo.fromJson({})).user != null;
+    // //  对方是自己的好友
+    // bool inFriendsList = cUsermodal(context).friendsList.firstWhere((item) => item.user == widget.target, orElse: () => null) != null &&
+    // //  自己是对方的好友
+    // widget.infoObj.friendsList.firstWhere((item) => item['userName'] == cUser(context), orElse: () => null) != null;
     return Container(
             child: widget.type == 'search' ?
               Container(
@@ -117,6 +120,13 @@ class _ButtonGroupState extends State<ButtonGroup> with CommonInterface {
           );
   }
 
+  bool get inFriendsList {
+    //  自己是对方的好友
+    return cUsermodal(context).friendsList.firstWhere((item) => item.user == widget.target, orElse: () => null) != null &&
+    //  对方是自己的好友
+    widget.infoObj.friendsList.firstWhere((item) => item['userName'] == cUser(context), orElse: () => null) != null;
+  }
+
   void addFriend() async {
     //await Network.get('searchName', {'searchName': searchContent});
     var res = await Network.get('addFriend', {'userName': cUser(context), 'friendName': widget.target});
@@ -142,7 +152,7 @@ class _ButtonGroupState extends State<ButtonGroup> with CommonInterface {
   }
 
   void ignore() async {
-    var res = await Network.get('updateUserInfo', {
+    await Network.get('updateUserInfo', {
       'userName': cUser(context), 
       'changeObj': { 
         'delete': { 
