@@ -79,8 +79,6 @@ class _FindFriendState extends State<FindFriend> with CommonInterface {
     }
     var res;
     res = await Network.get('searchName', {'searchName': searchContent});
-    print(res.data);
     resultList = res.data.map<FriendInfo>((item) => FriendInfo.fromJson(item)).toList();
-    print(res);
   }
 }

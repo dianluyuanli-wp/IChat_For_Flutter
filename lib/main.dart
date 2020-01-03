@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
 
   @override
   Widget build(BuildContext context) {
-    registerNotification();
+    registerNotification(context);
     return Scaffold(
       appBar: AppBar(
         title: TitleContent(index: _selectedIndex),
@@ -110,8 +110,9 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
     });
   }
 
-  void registerNotification() {
+  void registerNotification(context) {
     UserModle newUserModel = cUsermodal(context);
+    BuildContext toastContext = context;
     Message mesArray = Provider.of<Message>(context);
     //  聊天信息
     if(!cMysocket(context).hasListeners('chat message')) {
@@ -119,6 +120,7 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
         String owner = msg['owner'];
         String message = msg['message'];
         SingleMesCollection mesC = mesArray.getUserMesCollection(owner);
+        print(cUser(context));
         if (mesC.bothOwner == null) {
           mesArray.addItemToMesArray(owner, newUserModel.user, message);
         } else {
@@ -141,9 +143,9 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
         String type = msg['type'];
         Map message = msg['message'] == 'msg' ? {} : msg['message'];
         Map notificationMap = {
-          'NOT_YOUR_FRIEND': () { showToast('对方开启好友验证，本消息无法送达', context); },
+          'NOT_YOUR_FRIEND': () { showToast('对方开启好友验证，本消息无法送达', toastContext); },
           'NEW_FRIEND_REQ': () {
-            cUsermodal(context).friendRequest.add(message);
+            cUsermodal(toastContext).friendRequest.add(message);
           },
           'REQ_AGREE': () {
             if (cUsermodal(context).friendsList.firstWhere((item) => item.user == message['userName'], orElse: () => null) == null) {

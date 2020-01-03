@@ -268,7 +268,9 @@ class Message extends MessageNotifier {
   }
   //  获取与某人的聊天记录
   SingleMesCollection getUserMesCollection(String name) {
-    return messageArray.firstWhere((item) => item.bothOwner.contains(name), orElse: () => new SingleMesCollection());
+    return messageArray.firstWhere((item)  {
+      return item.bothOwner.contains(name);
+      }, orElse: () => new SingleMesCollection());
   }
   //  添加一个新的聊天记录
   void addItemToMesArray(String sender, String receiver, String content) {
@@ -305,6 +307,6 @@ abstract class CommonInterface {
     return Provider.of<Message>(context);
   }
   FriendInfo cFriendInfo(BuildContext context, String name) {
-    return cUsermodal(context).friendsList.firstWhere((item) => item.user == name);
+    return cUsermodal(context).friendsList.firstWhere((item) => item.user == name, orElse: () => new FriendInfo.fromJson({}));
   }
 }

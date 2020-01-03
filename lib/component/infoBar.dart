@@ -16,7 +16,6 @@ class PersonInfoBar extends StatelessWidget {
   final String type;
   @override
   Widget build(BuildContext context) {
-    print(useButton);
     return Container(
       decoration: BoxDecoration(
         color: Color(0xffffffff)
@@ -145,22 +144,22 @@ class _ButtonGroupState extends State<ButtonGroup> with CommonInterface {
         cMysocket(context).emit('informFriend', { 'type': 'addReq', 'friendName': widget.target, 'IAm': cUser(context)});
         if (cUsermodal(context).friendsList.firstWhere((item) => item.user == widget.target, orElse: () => null) == null) {
           FriendInfo targetInfo = widget.infoObj;
-          cUsermodal(context).friendsListJson.insert(0, { 'nserName': targetInfo.user, 'nickName': targetInfo.nickName, 'avatar': targetInfo.avatar });
+          cUsermodal(context).friendsListJson.insert(0, { 'userName': targetInfo.user, 'nickName': targetInfo.nickName, 'avatar': targetInfo.avatar });
         }
-        cUsermodal(context).friendRequest = cUsermodal(context).friendRequest.where((item) => item['userName'] != widget.target);
+        cUsermodal(context).friendRequest = cUsermodal(context).friendRequest.where((item) => item['userName'] != widget.target).toList();
       }
   }
 
   void ignore() async {
-    await Network.get('updateUserInfo', {
+    await Network.post('updateUserInfo', {
       'userName': cUser(context), 
-      'changeObj': { 
-        'delete': { 
-          'value': widget.target, 
+      'changeObj': {
+        'delete': {
+          'value': widget.target,
           'key': 'friendRequest'
           }
         }
       });
-    cUsermodal(context).friendRequest = cUsermodal(context).friendRequest.where((item) => item['userName'] != widget.target);
+    cUsermodal(context).friendRequest = cUsermodal(context).friendRequest.where((item) => item['userName'] != widget.target).toList();
   }
 }
