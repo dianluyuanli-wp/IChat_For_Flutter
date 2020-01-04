@@ -14,10 +14,10 @@ import 'package:socket_io_client/socket_io_client.dart' as IO;
 void main() => Global.init().then((e) => runApp(MyApp(info: e)));
 
 class MyApp extends StatelessWidget with CommonInterface {
-
   MyApp({Key key, this.info}) : super(key: key);
   final info;
   // This widget is the root of your application.
+  //  根容器，用来初始化provider
   @override
   Widget build(BuildContext context) {
     UserModle newUserModel = new UserModle();
@@ -32,21 +32,40 @@ class MyApp extends StatelessWidget with CommonInterface {
         //  聊天信息
         ListenableProvider<Message>.value(value: messList)
       ],
-      child: ListenContainer(),
+      child: ContextContainer(),
     );
   }
 }
 
+class ContextContainer extends StatefulWidget {
+  @override
+  _ContextContainerState createState() => _ContextContainerState();
+}
+
+class _ContextContainerState extends State<ContextContainer> with CommonInterface {
+  //  上下文容器，主要用来注册登记和传递根上下文
+  @override
+  Widget build(BuildContext context) {
+    cMysocket(context).emit('register', cUser(context));
+    return ListenContainer(rootContext: context);
+  }
+}
+
 class ListenContainer extends StatefulWidget {
+  ListenContainer({Key key, this.rootContext})
+  : super(key: key);
+
+  final BuildContext rootContext;
   @override
   _ListenContainerState createState() => _ListenContainerState();
 }
 
 class _ListenContainerState extends State<ListenContainer> with CommonInterface {
+  //  用来记录chat组件是否存在的全局key
   final GlobalKey<ChatState> myK = GlobalKey<ChatState>();
+  //  注册路由的组件，删好友每次pop的时候都会到这里，上下文都会刷新
   @override
   Widget build(BuildContext context) {
-    cMysocket(context).emit('register', cUser(context));
     return MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(
@@ -63,7 +82,7 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
         ),
         initialRoute: '/',
         routes: {
-          '/': (context) => Provider.of<UserModle>(context).isLogin ? MyHomePage(myK: myK) : LogIn(),
+          '/': (context) => Provider.of<UserModle>(context).isLogin ? MyHomePage(myK: myK, originCon: widget.rootContext, toastContext: context) : LogIn(),
           'chat': (context) => Chat(key: myK),
           'modify': (context) => Modify(),
           'friendInfo': (context) => FriendInfoRoute()
@@ -73,10 +92,12 @@ class _ListenContainerState extends State<ListenContainer> with CommonInterface 
 }
 
 class MyHomePage extends StatefulWidget {
-  MyHomePage({Key key, this.myK})
+  MyHomePage({Key key, this.myK, this.originCon, this.toastContext})
   : super(key: key);
 
   final GlobalKey<ChatState> myK;
+  final BuildContext originCon;
+  final BuildContext toastContext;
   @override
   _MyHomePageState createState() => _MyHomePageState();
 }
@@ -86,7 +107,7 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
 
   @override
   Widget build(BuildContext context) {
-    registerNotification(context);
+    registerNotification();
     return Scaffold(
       appBar: AppBar(
         title: TitleContent(index: _selectedIndex),
@@ -95,7 +116,26 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(icon: Icon(Icons.chat), title: Text('Friends')),
-          BottomNavigationBarItem(icon: Icon(Icons.find_in_page), title: Text('Contacts')),
+          BottomNavigationBarItem(
+            icon: Stack(
+              overflow: Overflow.visible,
+              children: <Widget>[
+                Icon(Icons.find_in_page),
+                cUsermodal(context).friendRequest.length > 0 ? Positioned(
+                  child: Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                      color: Colors.red,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                  ),
+                  left: 15,
+                  top: -2,
+                ) : null,
+              ].where((item) => item != null).toList()
+            ),
+            title: Text('Contacts')),
           BottomNavigationBarItem(icon: Icon(Icons.my_location), title: Text('Me')),
         ],
         currentIndex: _selectedIndex,
@@ -110,46 +150,50 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
     });
   }
 
-  void registerNotification(context) {
-    UserModle newUserModel = cUsermodal(context);
-    BuildContext toastContext = context;
-    Message mesArray = Provider.of<Message>(context);
+  void showNotYourFriend() {
+    showToast('对方开启好友验证，本消息无法送达', widget.originCon);
+  }
+
+  void registerNotification() {
+    //  这里的上下文必须要用根上下文，因为listencontainer组件本身会因为路由重建，导致上下文丢失，全局监听事件报错找不到组件树
+    BuildContext rootContext = widget.originCon;
+    UserModle newUserModel = cUsermodal(rootContext);
+    Message mesArray = Provider.of<Message>(rootContext);
     //  聊天信息
-    if(!cMysocket(context).hasListeners('chat message')) {
-      cMysocket(context).on('chat message', (msg) {
+    if(!cMysocket(rootContext).hasListeners('chat message')) {
+      cMysocket(rootContext).on('chat message', (msg) {
         String owner = msg['owner'];
         String message = msg['message'];
         SingleMesCollection mesC = mesArray.getUserMesCollection(owner);
-        print(cUser(context));
         if (mesC.bothOwner == null) {
           mesArray.addItemToMesArray(owner, newUserModel.user, message);
         } else {
-          cMesArr(context).addMessRecord(owner, new SingleMessage(owner, message, new DateTime.now().millisecondsSinceEpoch));
+          cMesArr(rootContext).addMessRecord(owner, new SingleMessage(owner, message, new DateTime.now().millisecondsSinceEpoch));
         }
         //  非聊天环境
         if (widget.myK.currentState == null) {
-          cMesCol(context, owner).rankMark('receiver', owner);
+          cMesCol(rootContext, owner).rankMark('receiver', owner);
         } else {
           //  聊天环境
-          cMesCol(context, owner).updateMesRank(cMysocket(context), cUser(context));
+          cMesCol(rootContext, owner).updateMesRank(cMysocket(rootContext), cUser(rootContext));
           widget.myK.currentState.slideToEnd();
         }
       });
     }
     //  系统通知
-    if(!cMysocket(context).hasListeners('system notification')) {
-      cMysocket(context).on('system notification', (msg) {
-        print(msg['message']);
+    if(!cMysocket(rootContext).hasListeners('system notification')) {
+      cMysocket(rootContext).on('system notification', (msg) {
         String type = msg['type'];
         Map message = msg['message'] == 'msg' ? {} : msg['message'];
         Map notificationMap = {
-          'NOT_YOUR_FRIEND': () { showToast('对方开启好友验证，本消息无法送达', toastContext); },
+          'NOT_YOUR_FRIEND': () { showToast('对方开启好友验证，本消息无法送达', cUsermodal(rootContext).toastContext); },
           'NEW_FRIEND_REQ': () {
-            cUsermodal(toastContext).friendRequest.add(message);
+            cUsermodal(rootContext).addFriendReq(message);
           },
           'REQ_AGREE': () {
-            if (cUsermodal(context).friendsList.firstWhere((item) => item.user == message['userName'], orElse: () => null) == null) {
-              cUsermodal(context).friendsListJson.insert(0, { 'nserName': message['userName'], 'nickName': message['nickName'], 'avatar': message['avatar'] });
+            if (cUsermodal(rootContext).friendsList.firstWhere((item) => item.user == message['userName'], orElse: () => null) == null) {
+              cUsermodal(rootContext).friendsListJson.insert(0, { 'userName': message['userName'], 'nickName': message['nickName'], 'avatar': message['avatar'] });
+              cUsermodal(rootContext).notifyListeners();
             }
           }
         };

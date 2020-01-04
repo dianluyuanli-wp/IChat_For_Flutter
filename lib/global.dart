@@ -149,6 +149,11 @@ class UserModle extends ProfileChangeNotifier {
     _profile.avatar = data['avatar'];
   }
 
+  void addFriendReq(Map message) {
+    _profile.friendRequest.add(message);
+    notifyListeners();
+  }
+
   Map get modelJson => _profile.toJson();
 
   String toUser = '123';
@@ -161,6 +166,8 @@ class UserModle extends ProfileChangeNotifier {
   FriendInfo findFriendInfo(name) {
     return friendsList.firstWhere((item) => name == item.user);
   }
+
+  BuildContext toastContext;
 }
 
 class MySocketIO {

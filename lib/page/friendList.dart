@@ -36,10 +36,13 @@ class _FriendListState extends State<FriendList> with CommonInterface {
                         Container(
                           constraints: BoxConstraints(maxWidth: 40, maxHeight: 40),
                           margin: EdgeInsets.symmetric(horizontal: 5),
-                          child: Image(
-                            image: CachedNetworkImageProvider(friendInfo.avatar),
-                            width: 40,
-                          ),
+                          child: ClipRRect(
+                            child: Image(
+                              image: CachedNetworkImageProvider(friendInfo.avatar),
+                              width: 40,
+                            ),
+                            borderRadius: BorderRadius.circular(5),
+                          )
                         ),
                         flagDiff > 0 ? Positioned(
                           child: Container(

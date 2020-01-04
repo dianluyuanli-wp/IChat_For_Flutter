@@ -17,28 +17,17 @@ class ChatState extends State<Chat> with CommonInterface {
   Widget build(BuildContext context) {
     UserModle myInfo = Provider.of<UserModle>(context);
     String sayTo = myInfo.sayTo;
+    cUsermodal(context).toastContext = context;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Container(
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Transform.translate(
-                offset: Offset(-10, 0),
-                child: Text(cFriendInfo(context, sayTo).nickName),
-              ),
-              Transform.translate(
-                offset: Offset(80, 0),
-                child: IconButton(
-                  icon: Icon(Icons.attach_file, color: Colors.white),
-                  onPressed: toFriendInfo,
-                ),
-              )
-            ],
-          ),
-        ),
+        title: Text(cFriendInfo(context, sayTo).nickName),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.attach_file, color: Colors.white),
+            onPressed: toFriendInfo,
+          )
+        ],
       ),
       body: Column(children: <Widget>[
           TalkList(scrollController: _scrollController),

@@ -21,18 +21,7 @@ class _FriendInfoState extends State<FriendInfoRoute> with CommonInterface{
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Container(
-          alignment: Alignment.center,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Transform.translate(
-                offset: Offset(-30, 0),
-                child: Text(myInfo.sayTo),
-              ),
-            ],
-          ),
-        ),
+        title: Text(cFriendInfo(context, cUsermodal(context).sayTo).nickName)
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -93,7 +82,9 @@ class _FriendInfoState extends State<FriendInfoRoute> with CommonInterface{
         }}
       });
       cUsermodal(context).friendsListJson.removeWhere((item) => item['userName'] == friendName);
-      Navigator.pushNamed(context, '/');
+      //  路由之前清空所有路由
+      //Navigator.pushNamed(context, '/');
+      Navigator.of(context).pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
     }
   }
 
