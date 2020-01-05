@@ -9,6 +9,7 @@ import 'page/friendList.dart';
 import 'page/chat.dart';
 import './page/friendInfo.dart';
 import 'tools/utils.dart';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() => Global.init().then((e) => runApp(MyApp(info: e)));
@@ -159,6 +160,7 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
     BuildContext rootContext = widget.originCon;
     UserModle newUserModel = cUsermodal(rootContext);
     Message mesArray = Provider.of<Message>(rootContext);
+    FlutterAppBadger.updateBadgeCount(1);
     //  聊天信息
     if(!cMysocket(rootContext).hasListeners('chat message')) {
       cMysocket(rootContext).on('chat message', (msg) {
