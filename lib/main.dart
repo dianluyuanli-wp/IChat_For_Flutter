@@ -9,7 +9,6 @@ import 'page/friendList.dart';
 import 'page/chat.dart';
 import './page/friendInfo.dart';
 import 'tools/utils.dart';
-import 'package:flutter_app_badger/flutter_app_badger.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 void main() => Global.init().then((e) => runApp(MyApp(info: e)));
@@ -151,16 +150,11 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
     });
   }
 
-  void showNotYourFriend() {
-    showToast('对方开启好友验证，本消息无法送达', widget.originCon);
-  }
-
   void registerNotification() {
     //  这里的上下文必须要用根上下文，因为listencontainer组件本身会因为路由重建，导致上下文丢失，全局监听事件报错找不到组件树
     BuildContext rootContext = widget.originCon;
     UserModle newUserModel = cUsermodal(rootContext);
     Message mesArray = Provider.of<Message>(rootContext);
-    FlutterAppBadger.updateBadgeCount(1);
     //  聊天信息
     if(!cMysocket(rootContext).hasListeners('chat message')) {
       cMysocket(rootContext).on('chat message', (msg) {
@@ -180,6 +174,7 @@ class _MyHomePageState extends State<MyHomePage> with CommonInterface{
           cMesCol(rootContext, owner).updateMesRank(cMysocket(rootContext), cUser(rootContext));
           widget.myK.currentState.slideToEnd();
         }
+        updateBadger(rootContext);
       });
     }
     //  系统通知

@@ -7,6 +7,9 @@ import './tools/network.dart';
 import 'package:dio/dio.dart';
 import 'dart:math';
 import 'package:provider/provider.dart';
+// import './model/User.dart' as Um;
+// import './model/FriendInfo.dart' as Fm;
+// import './model/Message.dart' as Mm;
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 class Profile {
@@ -99,6 +102,12 @@ class FriendInfo {
   }
 }
 
+// class FriendInfo extends Fm.FriendInfo {
+//   FriendInfo.fromJson(Map json) {
+//     Fm.FriendInfo.fromJson(json);
+//   }
+// }
+
 class UserModle extends ProfileChangeNotifier {
   String get user => _profile.user;
   set user(String user) {
@@ -182,6 +191,8 @@ class MessageNotifier extends ChangeNotifier {
   }
 }
 
+//class UserModle extends Um.UserModle {}
+
 class SingleMessage {
   String owner;
   String content;
@@ -195,6 +206,19 @@ class SingleMessage {
     timeStamp = json['timeStamp'];
   }
 }
+// class SingleMessage {
+//   String owner;
+//   String content;
+//   int timeStamp;
+
+//   SingleMessage(this.owner, this.content, this.timeStamp);
+
+//   SingleMessage.fromJson(Map json) {
+//     owner = json['owner'];
+//     content = json['content'];
+//     timeStamp = json['timeStamp'];
+//   }
+// }
 
 class SingleMesCollection {
   String bothOwner;
@@ -289,6 +313,21 @@ class Message extends MessageNotifier {
     notifyListeners();
   }
 }
+
+// class Message extends Mm.Message {
+//     Message.fromJson(List json) {
+//       Mm.Message.fromJson(json);
+//   }
+// }
+
+// class SingleMesCollection extends Mm.SingleMesCollection {}
+
+// class SingleMessage extends Mm.SingleMessage {
+//   SingleMessage(this.owner, this.content, this.timeStamp);
+//   SingleMessage.fromJson(Map json) {
+//     Mm.SingleMessage.fromJson(json);
+//   }
+// }
 
 //  给其他widget做的抽象类，用来获取数据
 abstract class CommonInterface {

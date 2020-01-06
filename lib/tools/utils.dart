@@ -1,6 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:toast/toast.dart';
-//import 'toast.dart';
+import 'dart:math';
+import 'package:flutter_app_badger/flutter_app_badger.dart';
+import '../global.dart';
+import 'package:provider/provider.dart';
 
 void showToast(String value, BuildContext context) {
   Toast.show(value, context, duration: Toast.LENGTH_LONG, gravity: Toast.TOP);
@@ -36,4 +39,17 @@ String getIimeStringForChat(int timeStamp) {
         prefix = (dayGap < 6 ? dayMap[new DateTime.fromMillisecondsSinceEpoch(currentDateStamp - (dayGap * oneDayMillSec).floor()).weekday] : getYearMounthDate(timeStamp)) + '   ';
     }
     return prefix + res;
+}
+
+//  同步更新启动icon消息提醒
+void updateBadger(BuildContext rootContext) {
+  int number = Provider.of<Message>(rootContext).messageArray.fold(0, (value, element) {
+    int diff = element.flagDiff(Provider.of<UserModle>(rootContext).user);
+    return value + max(0, diff);
+  });
+  if (number == 0) {
+    FlutterAppBadger.removeBadge();
+  } else {
+    FlutterAppBadger.updateBadgeCount(min(number, 99));
+  }
 }

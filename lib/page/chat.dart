@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import '../global.dart';
 import 'chat/talkList.dart';
 import 'chat/inputForm.dart';
+import '../tools/utils.dart';
 
 class Chat extends StatefulWidget {
   Chat({Key key})
@@ -18,6 +19,8 @@ class ChatState extends State<Chat> with CommonInterface {
     UserModle myInfo = Provider.of<UserModle>(context);
     String sayTo = myInfo.sayTo;
     cUsermodal(context).toastContext = context;
+    //  更新桌面icon
+    updateBadger(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
