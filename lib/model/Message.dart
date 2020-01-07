@@ -1,10 +1,5 @@
 part of global;
 
-// import 'package:socket_io_client/socket_io_client.dart' as IO;
-// import 'package:i_chat/tools/utils.dart';
-// import 'dart:math';
-// import 'package:flutter/cupertino.dart';
-
 class SingleMessage {
   String owner;
   String content;
