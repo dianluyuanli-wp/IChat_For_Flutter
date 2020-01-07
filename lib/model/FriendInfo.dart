@@ -1,3 +1,4 @@
+part of global;
 class FriendInfo {
   String user;
   String nickName;

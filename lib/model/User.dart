@@ -1,7 +1,4 @@
-// import 'ProfileChangeNotifiler.dart';
-import '../global.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter/cupertino.dart';
+part of global;
 
 class ProfileChangeNotifier extends ChangeNotifier {
   Profile get _profile => Global.profile;

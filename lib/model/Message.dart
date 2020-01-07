@@ -1,12 +1,15 @@
-import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'package:i_chat/tools/utils.dart';
-import 'dart:math';
-import 'package:flutter/cupertino.dart';
+part of global;
+
+// import 'package:socket_io_client/socket_io_client.dart' as IO;
+// import 'package:i_chat/tools/utils.dart';
+// import 'dart:math';
+// import 'package:flutter/cupertino.dart';
 
 class SingleMessage {
   String owner;
   String content;
   int timeStamp;
+  SingleMessage(this.owner, this.content, this.timeStamp);
 
   SingleMessage.fromJson(Map json) {
     owner = json['owner'];
@@ -29,7 +32,7 @@ class SingleMesCollection {
     bothOwner = sender.compareTo(receiver) > 0 ? receiver + '@' + sender : sender + '@' + receiver;
     user1flag = isFirst(bothOwner, sender) ? 1 : 0;
     user2flag = isFirst(bothOwner, sender) ? 0 : 1;
-    //message = [new SingleMessage(sender, content, new DateTime.now().millisecondsSinceEpoch)];
+    message = [new SingleMessage(sender, content, new DateTime.now().millisecondsSinceEpoch)];
   }
 
   //  根据json的构造函数
