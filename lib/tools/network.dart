@@ -21,7 +21,7 @@ Map apiMap = {
   'agreeFriendReq': 'agreeFriendReq'
 };
 
-String domain = 'http://tangshisanbaishou.xyz/api/';
+String domain = 'you api domain';
 //String domain = 'http://localhost';
 
 class Network {

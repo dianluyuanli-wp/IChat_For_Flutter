@@ -67,7 +67,7 @@ class Global {
         print(e);
       }
     }
-    String socketIODomain = 'http://tangshisanbaishou.xyz';
+    String socketIODomain = 'you websocket domain';
     IO.Socket socket = IO.io(socketIODomain, <String, dynamic>{
       'transports': ['websocket'],
       'path': '/mySocket'
